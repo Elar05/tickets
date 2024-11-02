@@ -9,6 +9,7 @@ class Database
 {
   private $host;
   private $db;
+  private $port;
   private $user;
   private $password;
   private $charset;
@@ -17,6 +18,7 @@ class Database
   {
     $this->host = HOST;
     $this->db = DB;
+    $this->port = PORT;
     $this->user = USER;
     $this->password = PASS;
     $this->charset = CHARSET;
@@ -25,7 +27,7 @@ class Database
   public function connect(): PDO
   {
     try {
-      $conexion = "mysql:host={$this->host};dbname={$this->db};charset={$this->charset}";
+      $conexion = "mysql:host={$this->host};dbname={$this->db};port={$this->port};charset={$this->charset}";
       $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_EMULATE_PREPARES => false,
