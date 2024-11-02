@@ -1,0 +1,371 @@
+.text-dorado {
+  color: #c69830;
+}
+
+.btn.btn-dorado {
+  color: #fff;
+  background-color: #c69830;
+}
+
+.table-scroll {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
+}
+
+.table-scroll thead,
+.table-scroll tfoot {
+  flex: 0 0 auto;
+  width: calc(100% - 1em);
+}
+
+.table-scroll tbody {
+  /*flex: 1 1 auto;
+      display: block;*/
+  overflow-y: scroll;
+}
+
+.table-scroll tbody tr {
+  width: 100%;
+}
+
+.table-scroll thead,
+.table-scroll tfoot,
+.table-scroll tbody tr {
+  display: table;
+  table-layout: fixed;
+}
+
+.style {
+  display: inline-table;
+  table-layout: fixed;
+  width: calc(100% - 12px);
+}
+
+.grilla {
+  font-family: Arial, Verdana;
+  font-weight: normal;
+  font-size: 12px;
+  color: #444;
+}
+
+.bordered {
+  border: solid #ccc 1px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: 0 1px 1px #ccc;
+  -moz-box-shadow: 0 1px 1px #ccc;
+  box-shadow: 0 1px 1px #ccc;
+}
+
+.bordered td,
+.bordered th {
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  padding: 7px;
+}
+
+.bordered td:first-child,
+.bordered th:first-child {
+  border-left: none;
+}
+
+.FilaDatos {
+  color: black;
+  background-color: white;
+}
+
+.FilaDatos:hover {
+  background-color: #f9f7c5;
+}
+
+.FilaSeleccionada {
+  color: black;
+  background-color: #fbec88;
+}
+
+.FilaElegida {
+  color: #0a0000;
+  background-color: #ccc;
+}
+
+.FilaElegidaPermiso {
+  color: #0a0000;
+  background-color: #df8f1c;
+}
+
+.FilaCabecera {
+  color: white;
+}
+
+.FilaCabecera:hover {
+  text-decoration: underline;
+}
+
+.FilaHead {
+  background-color: #4a70e3;
+  color: white;
+  text-align: center;
+  /*font-weight: bold;*/
+}
+
+.bg-personalizado {
+  background-color: #234099 !important;
+}
+
+.custom-modal {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.custom-modal .modal-dialog {
+  border-color: #234099;
+  border-style: solid;
+  border-width: medium;
+  height: auto;
+}
+
+.custom-modal .modal-header {
+  padding: 5px !important;
+  border-radius: 0;
+  color: #fff;
+}
+
+.custom-modal .modal-content {
+  background-color: white;
+}
+
+.custom-modal .modal-title {
+  color: #c69830;
+  font-weight: bold;
+}
+
+.custom-modal .modal-footer {
+  padding: 1px !important;
+  border-radius: 0;
+  background-color: white;
+}
+
+.custom-modal .close {
+  color: #fff;
+  background-color: #ff0000;
+  border-radius: 50%;
+  border: 1px solid #ff0000;
+  height: 2.5rem;
+  width: 2.5rem;
+  position: relative;
+  right: 1rem;
+  padding: 0;
+  text-shadow: none;
+  font-weight: bold;
+}
+
+.btnGuardarForm {
+  color: white;
+  padding: 7px 14px;
+  display: inline-block;
+  cursor: pointer;
+  border-color: #234099;
+  border-radius: 7px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.btnGuardarForm:hover {
+  color: white;
+  border-color: #eb7d34;
+  background-color: #eb7d34;
+  font-size: 16px;
+}
+
+.btnCirculo {
+  font-size: 0.675rem;
+  line-height: 1;
+  border-radius: 50%;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0px;
+}
+
+/*checkbox toggle*/
+
+.outerDivFull {
+  margin: 50px;
+}
+
+.switchToggle input[type="checkbox"] {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+  position: absolute;
+}
+
+.switchToggle label {
+  cursor: pointer;
+  text-indent: -9999px;
+  width: 70px;
+  max-width: 70px;
+  height: 30px;
+  background: #d1d1d1;
+  display: block;
+  border-radius: 100px;
+  position: relative;
+}
+
+.switchToggle label:after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 26px;
+  height: 26px;
+  background: #fff;
+  border-radius: 90px;
+  transition: 0.3s;
+}
+
+.switchToggle input:checked + label,
+.switchToggle input:checked + input + label {
+  background: #3e98d3;
+}
+
+.switchToggle input + label:before,
+.switchToggle input + input + label:before {
+  content: "NO";
+  position: absolute;
+  top: 5px;
+  left: 35px;
+  width: 26px;
+  height: 26px;
+  border-radius: 90px;
+  transition: 0.3s;
+  text-indent: 0;
+  color: #fff;
+}
+
+.switchToggle input:checked + label:before,
+.switchToggle input:checked + input + label:before {
+  content: "SI";
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 90px;
+  transition: 0.3s;
+  text-indent: 0;
+  color: #fff;
+}
+
+.switchToggle input:checked + label:after,
+.switchToggle input:checked + input + label:after {
+  left: calc(100% - 2px);
+  transform: translateX(-100%);
+}
+
+.switchToggle label:active:after {
+  width: 60px;
+}
+
+.Pagina {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #4a70e3;
+  border: 2px solid #4a70e3;
+  color: white;
+  margin: 2px 5px 8px 2px;
+}
+
+.Pagina:hover {
+  cursor: pointer;
+  background-color: #f35800;
+  border: 2px solid #f35800;
+}
+
+.PaginaSel {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f35800;
+  border: 2px solid #f35800;
+  color: white;
+  margin: 2px 5px 8px 2px;
+}
+
+.selcheckbox {
+  width: 100%;
+  border: 1px solid blue;
+  height: 25px;
+}
+
+/*TABLA SCROLL CONTABILIDAD*/
+.table-scroll-accounting {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-top: 0 none !important;
+  border-bottom: 0 none !important;
+}
+
+.table-scroll-accounting thead {
+  position: sticky;
+  top: 0;
+  background-color: #02b29d;
+  z-index: 1;
+}
+
+.table-scroll-accounting thead tr th,
+.table-scroll-accounting tbody tr td {
+  border-left: 0 none !important;
+}
+
+.table-scroll-accounting tfoot {
+  position: sticky;
+  bottom: 0;
+}
+
+.fieldset {
+  padding: 10px;
+  clear: both;
+  width: auto;
+  border: 2px solid #ccc;
+}
+
+.legend {
+  background: #00bcd4;
+  color: white;
+  border: 1px solid #4e85c1;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 3px 5px 3px 7px;
+  width: auto;
+}
+
+.form-control-lectura {
+  display: block;
+  width: 100%;
+  padding: 0.27rem 0.25rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #bcdafb;
+  background-clip: padding-box;
+  border: 1px solid #bbb3b3;
+  border-radius: 0.45rem;
+  transition: width 0.4s ease-in-out;
+  height: 30px;
+}
+
+.form-control-lectura:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
