@@ -81,23 +81,18 @@ function getDataSave(className) {
 }
 
 function iziAlert(status, message) {
-  toastr.options = {
-    closeButton: true,
-    newestOnTop: true,
-    progressBar: true,
-    positionClass: "toastr-top-right",
-    timeOut: "5000",
-    showEasing: "swing",
-    hideEasing: "linear",
-    showMethod: "fadeIn",
-    hideMethod: "fadeOut",
+  const options = {
+    title: message,
+    message: "",
+    displayMode: "replace",
+    position: "topRight",
   };
 
   const alerts = {
-    success: () => toastr.success("", message),
-    error: () => toastr.error("", message),
-    info: () => toastr.info("", message),
-    warning: () => toastr.warning("", message),
+    success: () => iziToast.success(options),
+    error: () => iziToast.error(options),
+    info: () => iziToast.info(options),
+    warning: () => iziToast.warning(options),
   };
 
   if (alerts[status]) {
@@ -406,14 +401,13 @@ function reproducirVoz(texto) {
 var botones = [
   {
     cabecera: "Editar",
-    className:
-      "ki-solid ki-pencil fs-3 btn btn-sm btn-icon btn-primary w-30px h-30px",
+    className: "ri-pencil-fill fs-5 btn btn-sm btn-icon btn-primary",
     id: "Editar",
   },
   {
     cabecera: "Anular",
     className:
-      "ki-solid ki-minus-circle fs-3 btn btn-sm btn-icon btn-danger w-30px h-30px",
+      "ri-indeterminate-circle-fill fs-5 btn btn-sm btn-icon btn-danger",
     id: "Eliminar",
   },
 ];
@@ -514,8 +508,8 @@ function GrillaScroll(
     if (sinFiltros == null) {
       contenido += `
           <button id='btnLimpiar${divGrilla}' 
-            class='btn btn-warning btn-sm' style='background-color:#f3e92d'>
-            <i class='fa fa-paint-brush p-0'></i>
+            class='btn btn-warning btn-icon' style='background-color:#f5ea1b'>
+            <i class='ri-eraser-line fs-4'></i>
           </button>
       `;
     }
@@ -546,7 +540,7 @@ function GrillaScroll(
     `;
 
     contenido += `
-      <table class='grilla bordered Tabla table-scroll' id='tbl${divGrilla}'>
+      <table class='grilla table table-scroll' id='tbl${divGrilla}'>
         <thead>
           <tr class='FilaHead'>
     `;
@@ -685,10 +679,7 @@ function GrillaScroll(
         } else valores.push(control.value.toLowerCase());
       }
     }
-    //else {
-    //    var txtSearch = document.getElementById("txtSearch" + divGrilla);
-    //    if (txtSearch != null) valor = txtSearch.value.toLowerCase();
-    //}
+
     var c = 0;
     var exito = true;
     var fila = [];
@@ -1522,8 +1513,16 @@ function configurarControles(controles) {
   }
 }
 
-function buildURL(action, params = "") {
-  return `/${CONTROLLER}/${VIEW}/${action}?controller=${CONTROLLER}&view=${VIEW}${params}`;
+function buildURL(action, params = {}, controller = CONTROLLER, view = VIEW) {
+  let url = `/${CONTROLLER}/${VIEW}/${action}?controller=${controller}&view=${view}`;
+
+  for (const key in params) {
+    if (params.hasOwnProperty(key)) {
+      url += `&${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
+    }
+  }
+
+  return url;
 }
 
 function modal(modalId, open = true) {
@@ -1550,29 +1549,35 @@ function getConfig() {
 
   link.classList.add("active");
 
-  link
-    .closest(".menu-item.menu-lg-down-accordion")
-    .children[0].classList.add("active");
-
-  let idTabP = link
-    .closest(".tab-content")
-    .querySelector(".tab-pane.active")
-    .getAttribute("id");
-
-  document
-    .querySelector(`.nav-link[data-bs-target='#${idTabP}']`)
-    .classList.remove("active");
+  link.closest(".menu-dropdown").classList.add("show");
 
   link
-    .closest(".tab-content")
-    .querySelector(".tab-pane.active")
-    .classList.remove("active");
+    .closest(".menu-dropdown")
+    .closest(".nav-item")
+    .children[0].classList.remove("collapsed");
 
-  link.closest(".tab-pane").classList.add("active");
+  link
+    .closest(".menu-dropdown")
+    .closest(".nav-item")
+    .children[0].setAttribute("aria-expanded", "true");
+}
 
-  let idTab = link.closest(".tab-pane").getAttribute("id");
+function NumberCheck(e, field) {
+  key = e.keyCode ? e.keyCode : e.which;
+  // backspace
+  if (key == 8) return true;
+  // 0-9
+  if (key > 45 && key < 58) {
+    if (field.value == "") return true;
+    regexp = /^\d+(\.\d{0,4})?$/;
+    return regexp.test(field.value);
+  }
+  // .
+  if (key == 46) {
+    if (field.value == "") return false;
+    regexp = /^\d*\.?\d*$/;
+    return regexp.test(field.value);
+  }
 
-  document
-    .querySelector(`.nav-link[data-bs-target='#${idTab}']`)
-    .classList.add("active");
+  return false;
 }

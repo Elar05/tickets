@@ -21,8 +21,6 @@
 }
 
 .table-scroll tbody {
-  /*flex: 1 1 auto;
-      display: block;*/
   overflow-y: scroll;
 }
 
@@ -106,90 +104,20 @@
 }
 
 .FilaHead {
-  background-color: #4a70e3;
+  background-color: #405189;
   color: white;
   text-align: center;
-  /*font-weight: bold;*/
 }
 
-.bg-personalizado {
-  background-color: #234099 !important;
-}
-
-.custom-modal {
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.custom-modal .modal-dialog {
-  border-color: #234099;
-  border-style: solid;
-  border-width: medium;
-  height: auto;
-}
-
-.custom-modal .modal-header {
-  padding: 5px !important;
-  border-radius: 0;
-  color: #fff;
-}
-
-.custom-modal .modal-content {
-  background-color: white;
-}
-
-.custom-modal .modal-title {
-  color: #c69830;
-  font-weight: bold;
-}
-
-.custom-modal .modal-footer {
-  padding: 1px !important;
-  border-radius: 0;
-  background-color: white;
-}
-
-.custom-modal .close {
-  color: #fff;
-  background-color: #ff0000;
-  border-radius: 50%;
-  border: 1px solid #ff0000;
-  height: 2.5rem;
-  width: 2.5rem;
-  position: relative;
-  right: 1rem;
-  padding: 0;
-  text-shadow: none;
-  font-weight: bold;
-}
-
-.btnGuardarForm {
+/* Dark Mode */
+/* [data-layout-mode="dark"] .FilaDatos {
+  background-color: #212529;
   color: white;
-  padding: 7px 14px;
-  display: inline-block;
-  cursor: pointer;
-  border-color: #234099;
-  border-radius: 7px;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.btnGuardarForm:hover {
-  color: white;
-  border-color: #eb7d34;
-  background-color: #eb7d34;
-  font-size: 16px;
-}
-
-.btnCirculo {
-  font-size: 0.675rem;
-  line-height: 1;
-  border-radius: 50%;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 0px;
-}
+} */
+/* [data-layout-mode="dark"] .table-light th,
+[data-layout-mode="dark"] .table-light td {
+  background-color: var(--vz-light);
+} */
 
 /*checkbox toggle*/
 

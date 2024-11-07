@@ -17,7 +17,7 @@ class GeneralModel extends Model
   {
     try {
       $pdo = new Model();
-      $query = $pdo->prepare("CALL {$sp}List('$data')");
+      $query = $pdo->prepare("CALL {$sp}List('$data', '')");
       $query->execute();
       return $query->fetch(PDO::FETCH_ASSOC)["data"];
     } catch (PDOException $e) {

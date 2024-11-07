@@ -686,8 +686,5 @@
 <script src="<?= URL ?>/assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
 <script src="<?= URL ?>/assets/js/plugins.js"></script>
 
-<!-- App js -->
-<script src="<?= URL ?>/assets/js/app.js"></script>
-
-<!-- Dev -->
-<script src="<?= URL ?>/public/js/App.js"></script>
+<script src="<?= URL ?>/assets/libs/iziToast/js/iziToast.min.js"></script>
+<script src="<?= URL ?>/assets/libs/sweetalert2/sweetalert2.min.js"></script>

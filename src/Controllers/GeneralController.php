@@ -30,14 +30,16 @@ class GeneralController extends Session
   public function store()
   {
     $sp = $this->getSP();
-    $data = GeneralModel::save($sp, $_POST["data"]);
+    $datos = $_POST["data"] . "¯" . $this->getUserId();
+    $data = GeneralModel::save($sp, $datos);
     $this->response(["data" => $data]);
   }
 
   public function destroy()
   {
     $sp = $this->getSP();
-    $data = GeneralModel::delete($sp, $_POST["data"]);
+    $datos = $_POST["data"] . "¯" . $this->getUserId();
+    $data = GeneralModel::delete($sp, $datos);
     $this->response(["data" => $data]);
   }
 

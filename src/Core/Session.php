@@ -75,4 +75,9 @@ class Session extends Controller
     session_unset();
     session_destroy();
   }
+
+  public function getUserId()
+  {
+    return $this->userId;
+  }
 }
