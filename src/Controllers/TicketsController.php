@@ -3,6 +3,7 @@
 namespace Instagram\Controllers;
 
 use Instagram\Core\Session;
+use Instagram\Models\GeneralModel;
 
 class TicketsController extends Session
 {
@@ -14,6 +15,11 @@ class TicketsController extends Session
   public function Nuevo()
   {
     $this->view("tickets/nuevo");
+  }
+
+  public function Detalle($id)
+  {
+    $this->view("tickets/detalle", ["id" => $id]);
   }
 
   public function Categorias()
@@ -33,11 +39,32 @@ class TicketsController extends Session
 
   public function Abiertos()
   {
-    $this->view("tickets/abiertos");
+    $this->view("tickets/listado", [
+      "tipoTicket" => 3,
+      "titulo" => "Abiertos"
+    ]);
   }
 
   public function Cerrados()
   {
-    $this->view("tickets/cerrados");
+    $this->view("tickets/listado", [
+      "tipoTicket" => 4,
+      "titulo" => "Cerrados"
+    ]);
+  }
+
+  public function guardarDocumentos()
+  {
+    $data = $this->validate(["ticket_id" => "exists|required"]);
+
+    $uploadedFiles = $this->saveFiles($_FILES['documento'], "assets/documentos/$data[ticket_id]/", ['jpg', 'png', 'pdf', 'webp', 'jpeg']);
+
+    if ($uploadedFiles["success"]) {
+      $urls = implode("¬", $uploadedFiles["success"]);
+      $res = GeneralModel::save("TicketsDocumentos", "$data[ticket_id]|0¯$urls");
+      $this->response(["success" => $res]);
+    }
+
+    $this->response(["error" => $uploadedFiles["error"]]);
   }
 }

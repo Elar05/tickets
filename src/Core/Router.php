@@ -87,6 +87,11 @@ $router->mount("/security/user-actions", function () use ($router) {
 });
 
 $router->mount("/tickets", function () use ($router) {
+  $router->get("/(\d+)", function ($id) {
+    $controller = new TicketsController();
+    $controller->Detalle($id);
+  });
+
   // Nuevo
   $router->get("/nuevo", function () {
     $controller = new TicketsController();
@@ -99,6 +104,10 @@ $router->mount("/tickets", function () use ($router) {
   $router->post("/nuevo/save", function () {
     $controller = new GeneralController();
     $controller->store();
+  });
+  $router->post("/nuevo/guardar-documento", function () {
+    $controller = new TicketsController();
+    $controller->guardarDocumentos();
   });
 
   // Abiertos

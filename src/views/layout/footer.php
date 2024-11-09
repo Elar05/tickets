@@ -19,6 +19,7 @@
     </div>
   </div>
 </footer>
+
 </div>
 <!-- end main content-->
 </div>
@@ -684,7 +685,7 @@
 <script src="<?= URL ?>/assets/libs/node-waves/waves.min.js"></script>
 <script src="<?= URL ?>/assets/libs/feather-icons/feather.min.js"></script>
 <script src="<?= URL ?>/assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
-<script src="<?= URL ?>/assets/js/plugins.js"></script>
 
 <script src="<?= URL ?>/assets/libs/iziToast/js/iziToast.min.js"></script>
 <script src="<?= URL ?>/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>

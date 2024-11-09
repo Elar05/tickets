@@ -1,4 +1,7 @@
 let listaSubCategorias = [];
+let previewTemplate;
+let dropzone;
+let dropzonePreviewNode = document.querySelector("#dropzone-preview-list");
 
 window.onload = function () {
   getConfig();
@@ -14,6 +17,46 @@ window.onload = function () {
   }
   if (VIEW === "nuevo") {
     getHelpers();
+
+    if (dropzonePreviewNode) {
+      dropzonePreviewNode.id = "";
+      previewTemplate = dropzonePreviewNode.parentNode.innerHTML;
+      dropzonePreviewNode.parentNode.removeChild(dropzonePreviewNode);
+
+      dropzone = new Dropzone(".dropzone", {
+        url: `${URL_BASE}/tickets/nuevo/guardar-documento`,
+        method: "POST",
+        previewTemplate: previewTemplate,
+        previewsContainer: "#dropzone-preview",
+        clickable: true,
+        autoProcessQueue: false,
+        uploadMultiple: true,
+        parallelUploads: 10,
+        paramName: "documento",
+        acceptedFiles: ".jpg, .jpeg, .png, .webp, .pdf",
+        maxFiles: 10,
+        maxFilesize: 1,
+        init: function () {
+          this.on("errormultiple", function (files, response) {});
+          this.on("complete", function () {});
+
+          this.on("removedfile", function (file) {
+            // let fileName = file.name;
+            // request("/tickets/nuevo/eliminar-documento", { fileName }, "POST")
+            //   .then(({ data }) => {
+            //     if (data.success) {
+            //       console.log("Archivo eliminado correctamente en el servidor.");
+            //     } else {
+            //       console.error("Error al eliminar el archivo en el servidor.");
+            //     }
+            //   })
+            //   .catch((error) => {
+            //     console.error("Error al intentar eliminar el archivo:", error);
+            //   });
+          });
+        },
+      });
+    }
   }
 
   configureButtons();
@@ -184,12 +227,93 @@ function getList() {
     let tipocId = document.getElementById("tipocId").value;
     url = buildURL("list", { data: tipocId }, "Utilidades", "");
   }
-  if (VIEW === "abiertos" || VIEW === "cerrados") {
-    let data = VIEW === "abiertos" ? 3 : 4;
-    url = buildURL("list", { data }, CONTROLLER, "");
-  }
 
-  request(url).then(({ data }) => showList(data));
+  if (VIEW === "abiertos" || VIEW === "cerrados") {
+    let data = document.querySelector("#tipoTicket").value;
+    url = buildURL("list", { data }, CONTROLLER, "");
+    document.getElementById("topnav-hamburger-icon").click();
+
+    $("#tableTickets").DataTable({
+      aProcessing: true,
+      aServerSide: true,
+      responsive: false,
+      ajax: {
+        url: URL_BASE + url,
+        type: "GET",
+        dataType: "json",
+        data: {},
+        success: function (response) {
+          if (response.data) {
+            // Aquí limpiamos la tabla antes de agregar nuevas filas
+            $("#tableTickets").DataTable().clear();
+
+            let datos = response.data.replace("¯", "");
+            if (datos !== "") {
+              datos = datos.split("¬");
+              datos.forEach(function (item) {
+                item = item.split("|");
+
+                const prioridadMap = {
+                  8: "danger",
+                  9: "warning",
+                  10: "primary",
+                };
+                let classPrio = prioridadMap[item[10]];
+                let prioridad = `<span class="badge rounded-pill bg-${classPrio} fs-6">${item[4]}</span>`;
+
+                let classSoporte = item[5] === "" ? "info" : "success";
+                let soporte = `<span class="badge rounded-pill bg-${classSoporte} fs-6">
+                  ${item[5] || "Sin Soporte"}
+                </span>`;
+
+                let fechaAsignada =
+                  item[6] === ""
+                    ? `<span class="badge rounded-pill bg-info fs-6">Sin Asignar</span>`
+                    : item[6];
+
+                let fechaCierre =
+                  item[8] === ""
+                    ? `<span class="badge rounded-pill bg-info fs-6">Sin Cierre</span>`
+                    : item[8];
+
+                let estado = "";
+                if (item[11] === "3") {
+                  estado = `<span class="badge rounded-pill bg-success fs-6">${item[9]}</span>`;
+                } else {
+                  estado = `<span class="badge rounded-pill bg-danger fs-6 cursor-pointer">${item[9]}</span>`;
+                }
+
+                let viewTicket = `<a href="${URL_BASE}/${CONTROLLER}/${item[0]}" class="btn btn-sm btn-primary waves-effect waves-light">
+                  <i class="ri-eye-line fs-6"></i>
+                </a>`;
+
+                let row = [
+                  item[0], // N° Ticket
+                  item[1], // Titulo
+                  item[2], // Categoria
+                  item[3], // Sub Categoria
+                  prioridad,
+                  soporte,
+                  fechaAsignada,
+                  fechaCierre,
+                  item[7],
+                  estado,
+                  viewTicket,
+                ];
+                $("#tableTickets").DataTable().row.add(row);
+              });
+            }
+
+            // Dibujamos la tabla con los datos nuevos
+            $("#tableTickets").DataTable().draw();
+          }
+        },
+      },
+      order: [[0, "desc"]],
+    });
+  } else {
+    request(url).then(({ data }) => showList(data));
+  }
 }
 
 function showList(response) {
@@ -197,21 +321,25 @@ function showList(response) {
     let listas = response.split("¯");
     let lista = listas[0].split("¬");
 
-    grillaItem = new GrillaScroll(
-      lista,
-      "divList",
-      100,
-      6,
-      VIEW,
-      CONTROLLER,
-      null,
-      null,
-      null,
-      botones,
-      30,
-      false,
-      null
-    );
+    if (VIEW === "abiertos" || VIEW === "cerrados") {
+      createTableTickets(lista);
+    } else {
+      grillaItem = new GrillaScroll(
+        lista,
+        "divList",
+        100,
+        6,
+        VIEW,
+        CONTROLLER,
+        null,
+        null,
+        null,
+        botones,
+        30,
+        false,
+        null
+      );
+    }
   }
 }
 
@@ -306,12 +434,38 @@ function showSave(response) {
     let message = result[1];
 
     if (VIEW === "nuevo") {
-      redirect("tickets/abiertos");
+      let id = list;
+
+      if (id !== "") {
+        // Ahora agregamos ese parámetro a la configuración de Dropzone
+        dropzone.on("sendingmultiple", function (files, xhr, formData) {
+          formData.append("ticket_id", id);
+        });
+
+        // Procesar la cola de archivos
+        dropzone.processQueue();
+
+        dropzone.on("successmultiple", function (files, response) {
+          response = JSON.parse(response);
+          if (response.error) {
+            iziAlert("error", response.error);
+          }
+
+          if (response.success) {
+            let res = response.success.split("|");
+            if (res[0] == "A") {
+              iziAlert("success", res[1]);
+              redirect("tickets/abiertos");
+            } else {
+              iziAlert("error", res[1]);
+            }
+          }
+        });
+      }
     } else {
       btnCancel.click();
+      showList(list);
     }
-
-    showList(list);
 
     if (type == "A") {
       iziAlert("success", message);
@@ -428,4 +582,24 @@ function listarSubCategorias() {
     }
   });
   createCombo(lista, "cboSubCategoria", "Seleccione");
+}
+
+function createTableTickets(data) {
+  // let rows = "";
+  // data.forEach((item) => {
+  //   item = item.split("|");
+  //   rows += `<tr>
+  //     <td>${item[1]}</td>
+  //     <td>${item[2]}</td>
+  //     <td>${item[3]}</td>
+  //     <td>${item[4]}</td>
+  //     <td>${item[5]}</td>
+  //     <td>${item[6]}</td>
+  //     <td>${item[7]}</td>
+  //     <td>${item[8]}</td>
+  //     <td>${item[9]}</td>
+  //     <td>${item[10]}</td>
+  //   </tr>`;
+  // });
+  // document.querySelector("#tableTickets tbody").innerHTML = rows;
 }

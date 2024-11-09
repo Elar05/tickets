@@ -14,7 +14,7 @@
       <div class="card-body">
         <input type="hidden" id="txtId" class="Popup">
         <div class="row mb-4">
-          <div class="col-4">
+          <div class="col-lg-4 mb-3 mb-lg-0">
             <label class="form-label fw-bold mb-1 required">Titulo</label>
             <div class="input-group">
               <span class="input-group-text py-1 px-2"><i class="ri-dashboard-line fs-4"></i></span>
@@ -22,9 +22,9 @@
             </div>
           </div>
 
-          <div class="col-8">
+          <div class="col-lg-8">
             <div class="row">
-              <div class="col-lg-4">
+              <div class="col-lg-4 mb-3 mb-lg-0">
                 <label class="form-label fw-bold mb-1 required">Categoria</label>
                 <div class="input-group">
                   <span class="input-group-text py-1 px-2"><i class="ri-dashboard-line fs-4"></i></span>
@@ -32,7 +32,7 @@
                 </div>
               </div>
 
-              <div class="col-lg-4">
+              <div class="col-lg-4 mb-3 mb-lg-0">
                 <label class="form-label fw-bold mb-1 required">Sub Categoria</label>
                 <div class="input-group">
                   <span class="input-group-text py-1 px-2"><i class="ri-dashboard-line fs-4"></i></span>
@@ -130,14 +130,8 @@
           '|',
           'bold',
           'italic',
-          'underline',
           '|',
-          // 'link',
-          // 'uploadImage',
-          'ckbox',
-          // 'insertTable',
           'blockQuote',
-          // 'mediaEmbed',
           '|',
           'bulletedList',
           'numberedList',
@@ -148,76 +142,11 @@
       })
       .then(function(e) {
         e.ui.view.editable.element.style.height = "200px";
-
         editor = e;
       })
       .catch(function(e) {
         console.error(e);
       });
-  }
-
-  var previewTemplate,
-    dropzone,
-    dropzonePreviewNode = document.querySelector("#dropzone-preview-list");
-
-  if (dropzonePreviewNode) {
-    dropzonePreviewNode.id = "";
-    previewTemplate = dropzonePreviewNode.parentNode.innerHTML;
-    dropzonePreviewNode.parentNode.removeChild(dropzonePreviewNode);
-
-    dropzone = new Dropzone(".dropzone", {
-      url: "<?= URL ?>/tickets/nuevo/guardar-documento",
-      method: "POST",
-      previewTemplate: previewTemplate,
-      previewsContainer: "#dropzone-preview",
-      clickable: true,
-      // addRemoveLinks: true, // Añadir enlaces para eliminar archivos
-      autoProcessQueue: true, // Procesa los archivos automáticamente cuando se agregan
-      paramName: "documento",
-      acceptedFiles: ".jpg,.jpeg,.png,.webp,.pdf",
-      maxFiles: 10, // Número máximo de archivos que se pueden subir
-      maxFilesize: 1, // Tamaño máximo por archivo en MB
-    });
-
-    // Opcional: Manejar evento de éxito
-    dropzone.on("success", function(file, response) {
-      console.log("Archivo subido con éxito:", file);
-      console.log(response);
-    });
-
-    // Opcional: Manejar evento de error
-    dropzone.on("error", function(file, errorMessage) {
-      console.log("Error al subir el archivo:", file, errorMessage);
-    });
-
-    dropzone.on("removedfile", function(file) {
-      // Esto se ejecuta cuando un archivo es eliminado de Dropzone
-
-      // Hacer una petición AJAX al servidor para eliminar el archivo
-      var fileName = file.name; // El nombre del archivo eliminado
-
-      fetch("<?= URL ?>/tickets/nuevo/eliminar-documento", {
-          method: "POST", // Usamos POST para enviar la solicitud de eliminación
-          headers: {
-            "Content-Type": "application/json", // Indicamos que enviamos JSON
-          },
-          body: JSON.stringify({
-            fileName: fileName
-          }) // Enviamos el nombre del archivo
-        })
-        .then(response => response.json()) // Parseamos la respuesta del servidor
-        .then(data => {
-          if (data.success) {
-            console.log("Archivo eliminado correctamente en el servidor.");
-          } else {
-            console.error("Error al eliminar el archivo en el servidor.");
-          }
-        })
-        .catch(error => {
-          console.error("Error al intentar eliminar el archivo:", error);
-        });
-    });
-
   }
 </script>
 

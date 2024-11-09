@@ -60,13 +60,13 @@ class Utils
     return $data;
   }
 
-  public function saveFile($file, string $folder, array $extensions)
+  public function saveFile($file, string $folder, array $extensions, bool $response = false)
   {
     if (!empty($file['name'])) {
       $ext = pathinfo($file["name"], PATHINFO_EXTENSION);
 
       if (!in_array($ext, $extensions)) {
-        $this->response(["error" => 'Tipo de archivo no valido']);
+        $this->response(["error" => 'Tipo de archivo no valido'], $response);
       }
 
       if (!file_exists($folder)) mkdir($folder, 0777, true);
@@ -83,16 +83,66 @@ class Utils
             return "/$url";
           }
 
-          $this->response(["error" => 'Ocurrió un error al guardar el archivo']);
+          $this->response(["error" => 'Ocurrió un error al guardar el archivo'], $response);
         }
 
-        $this->response(["error" => 'Ocurrió un error durante la carga del archivo']);
+        $this->response(["error" => 'Ocurrió un error durante la carga del archivo'], $response);
       }
 
-      $this->response(["error" => 'El archivo excede el límite de tamaño permitido']);
+      $this->response(["error" => 'El archivo excede el límite de tamaño permitido'], $response);
     }
 
-    $this->response(["error" => 'No hay archivo a guardar']);
+    $this->response(["error" => 'No hay archivo a guardar'], $response);
+  }
+
+  public function saveFiles(array $files, string $folder, array $extensions)
+  {
+    $success = [];
+    $errors = [];
+
+    foreach ($files['name'] as $index => $fileName) {
+      if (!empty($fileName)) {
+        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+
+        // Verificar si la extensión es válida
+        if (!in_array($ext, $extensions)) {
+          $errors[] = 'Tipo de archivo no válido para el archivo: ' . $fileName;
+          continue;
+        }
+
+        // Verificar si el directorio existe y si no, crearlo
+        if (!file_exists($folder)) {
+          mkdir($folder, 0777, true);
+        }
+
+        // Crear un hash único para el archivo
+        $hash = md5($fileName . microtime(true) . mt_rand());
+        $url = "$folder$hash.$ext";
+
+        // Verificar el tamaño máximo permitido
+        $maxFileSize = str_replace("M", "", ini_get('upload_max_filesize'));
+        $maxFileSize = ($maxFileSize * 1024 * 1024);
+
+        // Verificar si el tamaño del archivo es adecuado
+        if ($files['size'][$index] <= $maxFileSize) {
+          if ($files['error'][$index] === UPLOAD_ERR_OK) {
+            if (move_uploaded_file($files['tmp_name'][$index], $url)) {
+              $success[] = "$fileName|/$url";
+            }
+
+            $errors[] = 'Ocurrió un error al guardar el archivo: ' . $fileName;
+          }
+
+          $errors[] = 'Ocurrió un error durante la carga del archivo: ' . $fileName;
+        }
+
+        $errors[] = 'El archivo ' . $fileName . ' excede el límite de tamaño permitido';
+      }
+
+      $errors[] = 'El archivo ' . $fileName . ' esta vacio';
+    }
+
+    return ["success" => $success, "error" => $errors];
   }
 
   public function deleteFile($file)
@@ -154,10 +204,14 @@ class Utils
     return $birthdate > $deathdate;
   }
 
-  protected function response(array $data)
+  protected function response(array $data, $response = false)
   {
-    echo json_encode($data);
-    exit;
+    if ($response) {
+      return $data;
+    } else {
+      echo json_encode($data);
+      exit;
+    }
   }
 
 
