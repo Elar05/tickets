@@ -28,8 +28,8 @@
         <h3 class="card-title fs-4 mb-0 flex-grow-1">Sub Categorias de Tickets</h3>
 
         <div class="flex-shrink-0">
-          <button class="btn btn-sm btn-dorado btn-label waves-effect waves-light fs-5" id="btnNewDetalle" data-bs-toggle="modal"
-            data-bs-target="#modalContainerForm1">
+          <button class="btnNewDetalle btn btn-sm btn-dorado btn-label waves-effect waves-light fs-5" id="btnNewDetalle" data-bs-toggle="modal"
+            data-bs-target="#modalContainerForm1" hidden>
             <i class="ri-add-line label-icon align-middle fs-3 me-2"></i>
             Nuevo
           </button>
@@ -51,13 +51,13 @@
         <button id="btnCancel" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <input type="hidden" id="txtId" class="Popup">
-        <input type="hidden" id="tipocId" value="1">
+        <input type="hidden" id="txtTipocId" value="1" class="Save">
+        <input type="hidden" id="txtId" class="Popup Save">
 
         <label for="name" class="form-label fw-semibold mb-1">Nombre de Categoria</label>
         <div class="input-group">
           <span class="input-group-text"><i class="ri-user-line fs-5"></i></span>
-          <input type="text" id="txtName" class="form-control Popup Reque" />
+          <input type="text" id="txtName" class="form-control Popup Reque Save" />
         </div>
       </div>
       <div class="modal-footer py-2 border-top">
@@ -77,13 +77,14 @@
         <button id="btnCancelForm1" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <input type="hidden" id="txtTipocIdDetalle" value="2" class="PopupD">
-        <input type="hidden" id="txtIdDetalle" class="PopupD">
+        <input type="hidden" id="txtTipocIdDetalle" value="2" class="SaveD">
+        <input type="hidden" id="txtTipocIdRef" class="SaveD">
+        <input type="hidden" id="txtIdDetalle" class="PopupD SaveD">
 
         <label for="name" class="form-label fw-semibold mb-1">Nombre de Sub Categoria</label>
         <div class="input-group">
           <span class="input-group-text"><i class="ri-user-line fs-5"></i></span>
-          <input type="text" id="txtNameDetalle" class="form-control PopupD RequeD" />
+          <input type="text" id="txtNameDetalle" class="form-control PopupD RequeD SaveD" />
         </div>
       </div>
       <div class="modal-footer py-2 border-top">

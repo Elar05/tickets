@@ -86,10 +86,81 @@ $router->mount("/security/user-actions", function () use ($router) {
   });
 });
 
+$router->mount("/security/users", function () use ($router) {
+  $router->get("/", function () {
+    $controller = new SecurityController();
+    $controller->Users();
+  });
+
+  $router->get("/list", function () {
+    $controller = new GeneralController();
+    $controller->list();
+  });
+
+  $router->get("/edit", function () {
+    $controller = new GeneralController();
+    $controller->edit();
+  });
+
+  $router->post("/save", function () {
+    $controller = new GeneralController();
+    $controller->store();
+  });
+
+  $router->post("/delete", function () {
+    $controller = new GeneralController();
+    $controller->destroy();
+  });
+});
+
+$router->mount("/agencias", function () use ($router) {
+  $router->get("/nueva", function () {
+    $controller = new SecurityController();
+    $controller->Users();
+  });
+
+  $router->get("/list", function () {
+    $controller = new GeneralController();
+    $controller->list();
+  });
+
+  $router->get("/edit", function () {
+    $controller = new GeneralController();
+    $controller->edit();
+  });
+
+  $router->post("/save", function () {
+    $controller = new GeneralController();
+    $controller->store();
+  });
+
+  $router->post("/delete", function () {
+    $controller = new GeneralController();
+    $controller->destroy();
+  });
+});
+
 $router->mount("/tickets", function () use ($router) {
-  $router->get("/(\d+)", function ($id) {
+  // Detalle
+  $router->get("/detalle/(\d+)", function ($id) {
     $controller = new TicketsController();
     $controller->Detalle($id);
+  });
+  $router->get("/detalle/edit", function () {
+    $controller = new GeneralController();
+    $controller->edit();
+  });
+  $router->post("/detalle/guardar-documento", function () {
+    $controller = new TicketsController();
+    $controller->guardarDetalleDocumentos();
+  });
+  $router->get("/detalle/list", function () {
+    $controller = new GeneralController();
+    $controller->list();
+  });
+  $router->post("/detalle/save", function () {
+    $controller = new GeneralController();
+    $controller->store();
   });
 
   // Nuevo
@@ -110,6 +181,48 @@ $router->mount("/tickets", function () use ($router) {
     $controller->guardarDocumentos();
   });
 
+  // Manejo
+  $router->get("/manejo", function () {
+    $controller = new TicketsController();
+    $controller->Manejo();
+  });
+  $router->get("/manejo/list", function () {
+    $controller = new GeneralController();
+    $controller->list();
+  });
+  $router->post("/manejo/save", function () {
+    $controller = new GeneralController();
+    $controller->store();
+  });
+  $router->post("/manejo/guardar-documento", function () {
+    $controller = new TicketsController();
+    $controller->guardarDocumentos();
+  });
+  $router->get("/manejo-abiertos", function () {
+    $controller = new TicketsController();
+    $controller->ManejoAbiertos();
+  });
+  $router->get("/manejo-abiertos/list", function () {
+    $controller = new GeneralController();
+    $controller->list();
+  });
+  $router->post("/manejo-abiertos/save", function () {
+    $controller = new GeneralController();
+    $controller->store();
+  });
+  $router->get("/manejo-cerrados", function () {
+    $controller = new TicketsController();
+    $controller->ManejoCerrados();
+  });
+  $router->get("/manejo-cerrados/list", function () {
+    $controller = new GeneralController();
+    $controller->list();
+  });
+  $router->post("/manejo-cerrados/save", function () {
+    $controller = new GeneralController();
+    $controller->store();
+  });
+
   // Abiertos
   $router->get("/abiertos", function () {
     $controller = new TicketsController();
@@ -118,6 +231,10 @@ $router->mount("/tickets", function () use ($router) {
   $router->get("/abiertos/list", function () {
     $controller = new GeneralController();
     $controller->list();
+  });
+  $router->post("/abiertos/save", function () {
+    $controller = new GeneralController();
+    $controller->store();
   });
 
   // Cerrados
@@ -128,6 +245,10 @@ $router->mount("/tickets", function () use ($router) {
   $router->get("/cerrados/list", function () {
     $controller = new GeneralController();
     $controller->list();
+  });
+  $router->post("/cerrados/save", function () {
+    $controller = new GeneralController();
+    $controller->store();
   });
 
   // Categorias

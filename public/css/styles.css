@@ -74,6 +74,7 @@
 .FilaDatos {
   color: black;
   background-color: white;
+  font-size: 14px;
 }
 
 .FilaDatos:hover {
@@ -83,6 +84,7 @@
 .FilaSeleccionada {
   color: black;
   background-color: #fbec88;
+  font-size: 14px;
 }
 
 .FilaElegida {
@@ -110,10 +112,18 @@
 }
 
 /* Dark Mode */
-/* [data-layout-mode="dark"] .FilaDatos {
+[data-layout-mode="dark"] .FilaDatos {
   background-color: #212529;
   color: white;
-} */
+}
+[data-layout-mode="dark"] .FilaDatos:hover {
+  background-color: #4259b7;
+  color: white;
+}
+[data-layout-mode="dark"] .FilaSeleccionada {
+  background-color: #4259b7;
+  color: white;
+}
 /* [data-layout-mode="dark"] .table-light th,
 [data-layout-mode="dark"] .table-light td {
   background-color: var(--vz-light);

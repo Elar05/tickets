@@ -8,7 +8,7 @@ class SecurityController extends Session
 {
   public function __construct()
   {
-    parent::__construct("usertype");
+    parent::__construct("main");
   }
 
   public function UserTypes()
@@ -19,5 +19,10 @@ class SecurityController extends Session
   public function UserActions()
   {
     $this->view("user-actions/index");
+  }
+
+  public function Users()
+  {
+    $this->view("users/index");
   }
 }

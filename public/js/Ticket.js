@@ -2,6 +2,8 @@ let listaSubCategorias = [];
 let previewTemplate;
 let dropzone;
 let dropzonePreviewNode = document.querySelector("#dropzone-preview-list");
+let editor;
+const prioridadMap = { 8: "danger", 9: "warning", 10: "primary" };
 
 window.onload = function () {
   getConfig();
@@ -11,20 +13,29 @@ window.onload = function () {
     VIEW === "prioridades" ||
     VIEW === "titulos" ||
     VIEW === "abiertos" ||
-    VIEW === "cerrados"
+    VIEW === "cerrados" ||
+    VIEW === "manejo-abiertos" ||
+    VIEW === "manejo-cerrados"
   ) {
     getList();
   }
-  if (VIEW === "nuevo") {
+  if (VIEW === "nuevo" || VIEW === "manejo") {
     getHelpers();
+  }
+  if (VIEW === "detalle") {
+    let id = document.querySelector("#txtId").value;
+    editRegister(id);
+  }
 
+  // dropzone y ckeditor
+  if (VIEW === "nuevo" || VIEW === "detalle" || VIEW === "manejo") {
     if (dropzonePreviewNode) {
       dropzonePreviewNode.id = "";
       previewTemplate = dropzonePreviewNode.parentNode.innerHTML;
       dropzonePreviewNode.parentNode.removeChild(dropzonePreviewNode);
 
       dropzone = new Dropzone(".dropzone", {
-        url: `${URL_BASE}/tickets/nuevo/guardar-documento`,
+        url: `${URL_BASE}/tickets/${VIEW}/guardar-documento`,
         method: "POST",
         previewTemplate: previewTemplate,
         previewsContainer: "#dropzone-preview",
@@ -56,6 +67,36 @@ window.onload = function () {
           });
         },
       });
+    }
+
+    var ckeditorClassic = document.querySelector("#ttaDescripcion");
+    if (ckeditorClassic) {
+      ClassicEditor.create(ckeditorClassic, {
+        toolbar: [
+          "undo",
+          "redo",
+          "|",
+          "heading",
+          "|",
+          "bold",
+          "italic",
+          "|",
+          "blockQuote",
+          "|",
+          "bulletedList",
+          "numberedList",
+          "|",
+          "outdent",
+          "indent",
+        ],
+      })
+        .then(function (e) {
+          e.ui.view.editable.element.style.height = "200px";
+          editor = e;
+        })
+        .catch(function (e) {
+          console.error(e);
+        });
     }
   }
 
@@ -97,10 +138,15 @@ function seleccionarFila(fila, id, prefijo, event) {
   window["fila" + prefijo] = fila;
 
   if (VIEW === "categorias" && prefijo === "divList") {
-    document.getElementById("txtId").value = id;
+    showSection("btnNewDetalle");
+
     let tipocId = document.getElementById("txtTipocIdDetalle").value;
-    let data = tipocId + "|" + id;
-    let url = buildURL("list", { data }, "Utilidades", "Detalle");
+    document.getElementById("txtTipocIdRef").value = id;
+    let data = [tipocId, id];
+    let url = buildURL("list", data, {
+      controller: "Utilidades",
+      view: "Detalle",
+    });
     request(url).then(({ data }) => showListDetalle(data));
   }
 }
@@ -119,6 +165,15 @@ function configureButtons() {
         cboEstado.value = 1;
         cboEstado.disabled = true;
       }
+    });
+
+  let btnNewDetalle = document.getElementById("btnNewDetalle");
+  if (btnNewDetalle)
+    btnNewDetalle.addEventListener("click", (e) => {
+      clearForm("PopupD");
+
+      let modalTitle = document.getElementById("modalTitle");
+      if (modalTitle) modalTitle.innerText = "Nuevo Registro";
     });
 
   let btnSave = document.getElementById("btnSave");
@@ -182,6 +237,23 @@ function configureButtons() {
           });
       }
     });
+
+  let btnSaveComent = document.getElementById("btnSaveComent");
+  if (btnSaveComent !== null)
+    btnSaveComent.addEventListener("click", (e) => {
+      let valid = validate("Reque");
+
+      if (valid) {
+        swal.fire({
+          title: "Procesando...",
+          icon: "info",
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          showConfirmButton: false,
+        });
+        saveData();
+      }
+    });
 }
 
 function configureCombos() {
@@ -193,7 +265,7 @@ function configureCombos() {
 }
 
 function getHelpers() {
-  let url = buildURL("list", {}, CONTROLLER, VIEW + "Helpers");
+  let url = buildURL("list", [], { extraView: "Helpers" });
 
   request(url).then(({ data }) => showHelpers(data));
 }
@@ -213,6 +285,10 @@ function showHelpers(response) {
       createCombo([], "cboSubCategoria", "Seleccione");
       createCombo(listaPrioridades, "cboPrioridad", "Seleccione");
     }
+    if (VIEW === "manejo") {
+      let listaCategorias = listas[0].split("¬");
+      createCombo(listaCategorias, "cboCategoria", "Seleccione");
+    }
 
     if (VIEW === "") {
       getList();
@@ -224,13 +300,104 @@ function getList() {
   let url = buildURL("list");
 
   if (VIEW === "categorias" || VIEW === "prioridades" || VIEW === "titulos") {
-    let tipocId = document.getElementById("tipocId").value;
-    url = buildURL("list", { data: tipocId }, "Utilidades", "");
+    let tipocId = document.getElementById("txtTipocId").value;
+    url = buildURL("list", [tipocId], { controller: "Utilidades", view: "" });
   }
 
   if (VIEW === "abiertos" || VIEW === "cerrados") {
     let data = document.querySelector("#tipoTicket").value;
-    url = buildURL("list", { data }, CONTROLLER, "");
+    url = buildURL("list", [data], { view: "" });
+    document.getElementById("topnav-hamburger-icon").click();
+
+    $("#tableTickets").DataTable({
+      aProcessing: true,
+      aServerSide: true,
+      // responsive: false,
+      ajax: {
+        url: URL_BASE + url,
+        type: "GET",
+        dataType: "json",
+        data: {},
+        success: function (response) {
+          if (response.data) {
+            // Aquí limpiamos la tabla antes de agregar nuevas filas
+            $("#tableTickets").DataTable().clear();
+
+            let datos = response.data.replace("¯", "");
+            if (datos !== "") {
+              datos = datos.split("¬");
+              datos.forEach(function (item) {
+                item = item.split("|");
+
+                let classPrio = prioridadMap[item[10]];
+                let prioridad = `<span class="badge rounded-pill bg-${classPrio} fs-6">${item[4]}</span>`;
+
+                let classSoporte = item[5] === "" ? "info" : "success";
+                let soporte = `<span class="badge rounded-pill bg-${classSoporte} fs-6">
+                  ${item[5] || "Sin Soporte"}
+                </span>`;
+
+                let fechaAsignada =
+                  item[6] === ""
+                    ? `<span class="badge rounded-pill bg-info fs-6">Sin Asignar</span>`
+                    : formatDate(item[6]);
+
+                let fechaCierre =
+                  item[8] === ""
+                    ? `<span class="badge rounded-pill bg-info fs-6">Sin Cierre</span>`
+                    : formatDate(item[8]);
+
+                let viewTicket = `<a 
+                  href="${URL_BASE}/${CONTROLLER}/detalle/${item[0]}"
+                  class="btn btn-sm btn-primary waves-effect waves-light"
+                  onclick="setConfig('tickets', 'detalle')"
+                >
+                  <i class="ri-eye-line fs-6"></i>
+                </a>`;
+
+                if (VIEW === "abiertos") {
+                  viewTicket += `<button
+                    class="btn btn-sm btn-danger waves-effect waves-light ms-1"
+                    onclick="cambiarEstadoTicket(${item[0]}, this)"
+                  >
+                    <i class="ri-login-circle-line fs-6"></i>
+                  </button>`;
+                } else {
+                  viewTicket += `<button
+                    class="btn btn-sm btn-success waves-effect waves-light ms-1"
+                    onclick="cambiarEstadoTicket(${item[0]}, this)"
+                  >
+                    <i class="ri-logout-circle-line fs-6"></i>
+                  </button>`;
+                }
+
+                let row = [
+                  item[0], // N° Ticket
+                  item[1], // Titulo
+                  item[2], // Categoria
+                  item[3], // Sub Categoria
+                  prioridad,
+                  soporte,
+                  fechaAsignada,
+                  fechaCierre,
+                  formatDate(item[7]),
+                  viewTicket,
+                ];
+                $("#tableTickets").DataTable().row.add(row);
+              });
+            }
+
+            // Dibujamos la tabla con los datos nuevos
+            $("#tableTickets").DataTable().draw();
+          }
+        },
+      },
+      order: [[0, "desc"]],
+    });
+  }
+  if (VIEW === "manejo-abiertos" || VIEW === "manejo-cerrados") {
+    let data = document.querySelector("#tipoTicket").value;
+    url = buildURL("list", [data], { view: "Manejo" });
     document.getElementById("topnav-hamburger-icon").click();
 
     $("#tableTickets").DataTable({
@@ -253,51 +420,52 @@ function getList() {
               datos.forEach(function (item) {
                 item = item.split("|");
 
-                const prioridadMap = {
-                  8: "danger",
-                  9: "warning",
-                  10: "primary",
-                };
-                let classPrio = prioridadMap[item[10]];
-                let prioridad = `<span class="badge rounded-pill bg-${classPrio} fs-6">${item[4]}</span>`;
-
-                let classSoporte = item[5] === "" ? "info" : "success";
+                let classSoporte = item[2] === "" ? "info" : "success";
                 let soporte = `<span class="badge rounded-pill bg-${classSoporte} fs-6">
-                  ${item[5] || "Sin Soporte"}
+                  ${item[2] || "Sin Soporte"}
                 </span>`;
 
                 let fechaAsignada =
-                  item[6] === ""
+                  item[3] === ""
                     ? `<span class="badge rounded-pill bg-info fs-6">Sin Asignar</span>`
-                    : item[6];
+                    : formatDate(item[3]);
 
                 let fechaCierre =
-                  item[8] === ""
+                  item[4] === ""
                     ? `<span class="badge rounded-pill bg-info fs-6">Sin Cierre</span>`
-                    : item[8];
+                    : formatDate(item[4]);
 
-                let estado = "";
-                if (item[11] === "3") {
-                  estado = `<span class="badge rounded-pill bg-success fs-6">${item[9]}</span>`;
-                } else {
-                  estado = `<span class="badge rounded-pill bg-danger fs-6 cursor-pointer">${item[9]}</span>`;
-                }
-
-                let viewTicket = `<a href="${URL_BASE}/${CONTROLLER}/${item[0]}" class="btn btn-sm btn-primary waves-effect waves-light">
+                let viewTicket = `<a 
+                  href="${URL_BASE}/${CONTROLLER}/detalle/${item[0]}"
+                  class="btn btn-sm btn-primary waves-effect waves-light"
+                  onclick="setConfig('tickets', 'detalle')"
+                >
                   <i class="ri-eye-line fs-6"></i>
                 </a>`;
 
+                if (VIEW === "manejo-abiertos") {
+                  viewTicket += `<button
+                    class="btn btn-sm btn-danger waves-effect waves-light ms-1"
+                    onclick="cambiarEstadoTicket(${item[0]}, this)"
+                  >
+                    <i class="ri-login-circle-line fs-6"></i>
+                  </button>`;
+                } else {
+                  viewTicket += `<button
+                    class="btn btn-sm btn-success waves-effect waves-light ms-1"
+                    onclick="cambiarEstadoTicket(${item[0]}, this)"
+                  >
+                    <i class="ri-logout-circle-line fs-6"></i>
+                  </button>`;
+                }
+
                 let row = [
                   item[0], // N° Ticket
-                  item[1], // Titulo
-                  item[2], // Categoria
-                  item[3], // Sub Categoria
-                  prioridad,
+                  item[1], // Categoria
                   soporte,
                   fechaAsignada,
                   fechaCierre,
-                  item[7],
-                  estado,
+                  formatDate(item[5]),
                   viewTicket,
                 ];
                 $("#tableTickets").DataTable().row.add(row);
@@ -311,7 +479,14 @@ function getList() {
       },
       order: [[0, "desc"]],
     });
-  } else {
+  }
+
+  if (
+    VIEW !== "abiertos" &&
+    VIEW !== "cerrados" &&
+    VIEW !== "manejo-abiertos" &&
+    VIEW !== "manejo-cerrados"
+  ) {
     request(url).then(({ data }) => showList(data));
   }
 }
@@ -321,25 +496,21 @@ function showList(response) {
     let listas = response.split("¯");
     let lista = listas[0].split("¬");
 
-    if (VIEW === "abiertos" || VIEW === "cerrados") {
-      createTableTickets(lista);
-    } else {
-      grillaItem = new GrillaScroll(
-        lista,
-        "divList",
-        100,
-        6,
-        VIEW,
-        CONTROLLER,
-        null,
-        null,
-        null,
-        botones,
-        30,
-        false,
-        null
-      );
-    }
+    grillaItem = new GrillaScroll(
+      lista,
+      "divList",
+      100,
+      6,
+      VIEW,
+      CONTROLLER,
+      null,
+      null,
+      null,
+      botones,
+      30,
+      false,
+      null
+    );
   }
 }
 
@@ -367,10 +538,10 @@ function showListDetalle(response) {
 }
 
 function editRegister(id) {
-  let url = buildURL("edit", { id });
+  let url = buildURL("edit", [id]);
 
   if (VIEW === "categorias" || VIEW === "prioridades" || VIEW === "titulos") {
-    url = buildURL("edit", { id }, "Utilidades", "");
+    url = buildURL("edit", [id], { controller: "Utilidades", view: "" });
   }
 
   request(url).then(({ data }) => showEdit(data));
@@ -378,18 +549,89 @@ function editRegister(id) {
 
 function showEdit(response) {
   if (response) {
-    btnNew.click();
-    let inputs = response.split("|");
+    let btnNew = document.getElementById("btnNew");
+    if (btnNew) btnNew.click();
+
+    let lists = response.split("¯");
+    let inputs = lists[0].split("|");
 
     let cboStatus = document.getElementById("cboStatus");
     if (cboStatus) cboStatus.disabled = false;
 
     showDataFrom("Popup", inputs);
+
+    if (VIEW === "detalle") {
+      if (inputs[1] === "") {
+        document.getElementById("lblSoporte").innerHTML =
+          "<span class='badge rounded-pill bg-info'>Sin Soporte</span>";
+      } else {
+        document
+          .getElementById("lblSoporte")
+          .classList.add("badge", "rounded-pill", "bg-success");
+      }
+
+      document.getElementById("lblPrioridad").classList.add(inputs[10]);
+      document.getElementById("lblEstado").classList.add(inputs[11]);
+      document.getElementById("lblFechaCreacion").innerHTML = formatDate(
+        inputs[6]
+      );
+
+      if (inputs[7] === "") {
+        document.getElementById("lblFechaAsignada").innerHTML =
+          "<span class='badge rounded-pill bg-info'>Sin Asignar</span>";
+      } else {
+        document.getElementById("lblFechaAsignada").innerHTML = formatDate(
+          inputs[7]
+        );
+      }
+
+      if (inputs[8] === "") {
+        document.getElementById("lblFechaCierre").innerHTML =
+          "<span class='badge rounded-pill bg-info'>Sin Cierre</span>";
+      } else {
+        document.getElementById("lblFechaCierre").innerHTML = formatDate(
+          inputs[8]
+        );
+      }
+
+      editor.setData(inputs[9]);
+      editor.isReadOnly = true;
+
+      if (inputs[12] === "1") {
+        document.getElementById("lblNuevo").innerText = "Nuevo";
+      }
+
+      if (inputs[13] === "1") {
+        hideSection("NoDetalle");
+      }
+
+      if (lists[1] !== "") {
+        let documentos = lists[1].split("¬");
+        let rows = "";
+        documentos.forEach((doc) => {
+          let item = doc.split("|");
+          rows += `<tr>
+            <td>${item[0]}</td>
+            <td>
+              <a href="${URL_BASE}${item[1]}" download="${item[0]}" target="_blank">
+                <i class="ri-download-2-line fs-3 text-primary"></i> 
+              </a>
+            </td>
+          </tr>`;
+        });
+        document.querySelector("#tableDocumentos tbody").innerHTML += rows;
+      }
+
+      getDetalleComentarios();
+    }
   }
 }
 
 function editRegisterDetalle(id) {
-  let url = buildURL("edit", { id }, "Utilidades", "Detalle");
+  let url = buildURL("edit", [id], {
+    controller: "Utilidades",
+    view: "Detalle",
+  });
 
   request(url).then(({ data }) => showEditDetalle(data));
 }
@@ -407,14 +649,15 @@ function saveData() {
   let url = buildURL("save");
 
   if (VIEW === "categorias" || VIEW === "prioridades" || VIEW === "titulos") {
-    let tipocId = document.getElementById("tipocId").value;
-    data += `|${tipocId}`;
-    url = buildURL("save", {}, "Utilidades", "");
+    data = getDataSave("Save");
+    url = buildURL("save", [], { controller: "Utilidades", view: "" });
   }
-  if (VIEW === "nuevo") {
+  if (VIEW === "nuevo" || VIEW === "manejo") {
     let descripcion = editor.getData();
     data += `|${descripcion}`;
-    url = buildURL("save");
+  }
+  if (VIEW === "detalle") {
+    data = getDataSave("Save");
   }
 
   const form = new FormData();
@@ -433,13 +676,19 @@ function showSave(response) {
     let type = result[0];
     let message = result[1];
 
-    if (VIEW === "nuevo") {
+    if (VIEW === "nuevo" || VIEW === "manejo" || VIEW === "detalle") {
       let id = list;
 
       if (id !== "") {
         // Ahora agregamos ese parámetro a la configuración de Dropzone
         dropzone.on("sendingmultiple", function (files, xhr, formData) {
-          formData.append("ticket_id", id);
+          if (VIEW === "detalle") {
+            let ticket_id = document.getElementById("txtId").value;
+            formData.append("ticket_id", ticket_id);
+            formData.append("ticket_detalle_id", id);
+          } else {
+            formData.append("ticket_id", id);
+          }
         });
 
         // Procesar la cola de archivos
@@ -455,16 +704,34 @@ function showSave(response) {
             let res = response.success.split("|");
             if (res[0] == "A") {
               iziAlert("success", res[1]);
-              redirect("tickets/abiertos");
+              if (VIEW !== "detalle") {
+                setTimeout(() => {
+                  redirect("/tickets/" + VIEW);
+                }, 2000);
+              } else {
+                getDetalleComentarios();
+              }
             } else {
               iziAlert("error", res[1]);
             }
           }
         });
+
+        document.querySelector("#dropzone-preview").innerHTML = "";
+
+        if (VIEW === "detalle") {
+          document.getElementById("ttaComentario").value = "";
+          getDetalleComentarios();
+        }
       }
     } else {
       btnCancel.click();
       showList(list);
+    }
+
+    if (VIEW === "categorias") {
+      document.getElementById("divListDetalle").innerHTML = "";
+      hideSection("btnNewDetalle");
     }
 
     if (type == "A") {
@@ -476,16 +743,14 @@ function showSave(response) {
     iziAlert("error", "No se realizó el registro");
   }
 
-  btnSave.disabled = false;
+  let btnSave = document.getElementById("btnSave");
+  if (btnSave) btnSave.disabled = false;
 }
 
 function saveDataDetalle() {
-  let data = getDataSave("PopupD");
-  let tipocRefeId = document.getElementById("txtId").value;
+  let data = getDataSave("SaveD");
 
-  data += `|${tipocRefeId}`;
-
-  let url = buildURL("save", {}, "Utilidades", "Detalle");
+  let url = buildURL("save", [], { controller: "Utilidades", view: "Detalle" });
 
   const form = new FormData();
   form.append("data", data);
@@ -584,22 +849,124 @@ function listarSubCategorias() {
   createCombo(lista, "cboSubCategoria", "Seleccione");
 }
 
-function createTableTickets(data) {
-  // let rows = "";
-  // data.forEach((item) => {
-  //   item = item.split("|");
-  //   rows += `<tr>
-  //     <td>${item[1]}</td>
-  //     <td>${item[2]}</td>
-  //     <td>${item[3]}</td>
-  //     <td>${item[4]}</td>
-  //     <td>${item[5]}</td>
-  //     <td>${item[6]}</td>
-  //     <td>${item[7]}</td>
-  //     <td>${item[8]}</td>
-  //     <td>${item[9]}</td>
-  //     <td>${item[10]}</td>
-  //   </tr>`;
-  // });
-  // document.querySelector("#tableTickets tbody").innerHTML = rows;
+function getDetalleComentarios() {
+  let data = document.querySelector("#txtId").value;
+  let url = buildURL("list", [data]);
+  request(url).then(({ data }) => listarDetalleComentarios(data));
+}
+
+function listarDetalleComentarios(data) {
+  if (data !== "") {
+    document.getElementById("divComentarios").innerHTML = "";
+
+    let listas = data.split("¯");
+    let comentarios = listas[0] !== "" ? listas[0].split("¬") : [];
+    let documentos = listas[1] !== "" ? listas[1].split("¬") : [];
+
+    comentarios.forEach((comentario) => {
+      let item = comentario.split("|");
+      addComentario(item, documentos);
+    });
+    scrollToBottom();
+  }
+}
+
+function addComentario(item, documentos) {
+  let coment = `<div class="d-flex mb-2">
+    <div class="flex-shrink-0">
+      <img src="${URL_BASE}/assets/images/users/avatar-8.jpg" alt="" class="avatar-xs rounded-circle">
+    </div>
+    <div class="flex-grow-1 ms-3">
+      <h5 class="fs-13">
+        ${item[1]}
+        <small class="text-muted ms-2">${formatDate(item[2])}</small>
+      </h5>
+      <p class="text-muted">${item[3]}</p>
+      ${addDocumentos(item[0], documentos)}
+    </div>
+  </div>`;
+
+  document.getElementById("divComentarios").innerHTML += coment;
+}
+
+function addDocumentos(idComentario, documentos) {
+  let rows = "";
+
+  documentos.forEach((documento) => {
+    let item = documento.split("|");
+    if (item[0] == idComentario) {
+      rows += `<tr>
+        <td>${item[1]}</td>
+        <td>
+          <a href="${URL_BASE}${item[2]}" download="${item[1]}" target="_blank">
+            <i class="ri-download-2-line fs-3 text-primary"></i> 
+          </a>
+        </td>
+      </tr>`;
+    }
+  });
+
+  let content = `<div class="row mb-2">
+    <div class="col-12 col-lg-8">
+      <table class="table table-sm table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </div>`;
+
+  return rows !== "" ? content : "";
+}
+
+function scrollToBottom() {
+  const divComentarios = document.getElementById("divComentarios");
+  divComentarios.scrollTop = divComentarios.scrollHeight;
+}
+
+function cambiarEstadoTicket(id, element) {
+  let row = element.closest("tr");
+  let estado = VIEW === "abiertos" || VIEW === "manejo-abiertos" ? 4 : 3;
+  swal
+    .fire({
+      title: "¿Desea cambiar el estado del ticket?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si",
+      cancelButtonText: "No",
+    })
+    .then((result) => {
+      if (result.value) {
+        swal.fire({
+          title: "Procesando...",
+          icon: "info",
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          showConfirmButton: false,
+        });
+
+        let url = buildURL("save", [id], { view: "Estado" });
+        let data = id + "|" + estado;
+
+        const form = new FormData();
+        form.append("data", data);
+
+        request(url, form, "POST").then(({ data }) => {
+          if (data) {
+            let result = data.split("|");
+            let type = result[0];
+            let message = result[1];
+
+            if (type == "A") {
+              iziAlert("success", message);
+
+              $("#tableTickets").DataTable().row(row).remove().draw();
+            } else {
+              iziAlert("error", message);
+            }
+          }
+          swal.close();
+        });
+      }
+    });
 }

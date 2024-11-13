@@ -13,7 +13,7 @@
         <h3 class="card-title fs-4 mb-0 flex-grow-1">Listado de Tickets - <?= $titulo ?></h3>
 
         <div class="flex-shrink-0">
-          <a href="<?= URL ?>/tickets/nuevo" class="btn btn-sm fs-5 btn-dorado btn-label" onclick="setConfig('tickets', 'nuevo')"> 
+          <a href="<?= URL ?>/tickets/manejo" class="btn btn-sm fs-5 btn-dorado btn-label" onclick="setConfig('tickets', 'manejo')">
             <i class="ri-add-line label-icon align-middle fs-3 me-2"></i>
             Nuevo
           </a>
@@ -26,15 +26,12 @@
           <thead>
             <tr>
               <th>N° Ticket</th>
-              <th>Titulo</th>
               <th>Categoria</th>
-              <th>Sub Categoria</th>
-              <th>Prioridad</th>
               <th>Soporte</th>
               <th>Fecha Asignada</th>
               <th>Fecha Cierre</th>
               <th>Fecha Creación</th>
-              <th>Acciones</th>
+              <th></th>
             </tr>
           </thead>
           <tbody></tbody>

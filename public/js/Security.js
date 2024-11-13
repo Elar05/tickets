@@ -1,7 +1,7 @@
 window.onload = function () {
   getConfig();
 
-  if (VIEW === "user-types") {
+  if (VIEW === "users" || VIEW === "user-types") {
     getHelpers();
   }
   if (VIEW === "user-actions") {
@@ -113,7 +113,7 @@ function configureChecks() {
 }
 
 function getHelpers() {
-  let url = buildURL("list", "Helpers");
+  let url = buildURL("list", {}, CONTROLLER, VIEW + "Helpers");
 
   request(url).then(({ data }) => showHelpers(data));
 }
@@ -127,9 +127,9 @@ function showHelpers(response) {
       let html = "";
       actions.forEach((action) => {
         let item = action.split("|");
-        html += `<div class="form-check mb-5">
+        html += `<div class="form-check">
           <input class="form-check-input actionCheck" value="${item[0]}"id="action_${item[0]}" type="checkbox">
-          <label class="form-check-label fw-bold text-black fs-4" for="action_${item[0]}">${item[1]}</label>
+          <label class="form-check-label fw-bold text-black fs-5" for="action_${item[0]}">${item[1]}</label>
         </div>`;
       });
       document.getElementById("contentPermissions").innerHTML = html;
@@ -155,8 +155,7 @@ function showList(response) {
       if (botones.length === 2) {
         botones.push({
           cabecera: "Permisos",
-          className:
-            "ki-solid ki-category fs-3 btn btn-sm btn-icon btn-info w-30px h-30px",
+          className: "ri-shield-keyhole-line fs-5 btn btn-sm btn-icon btn-info",
           id: "Permisos",
         });
       }
@@ -285,16 +284,16 @@ function showDelete(response) {
   }
 }
 
-function getPermissions(id) {
-  let url = buildURL("list", `Actions&data=${id}`);
-  document.getElementById("userTypeId").value = id;
+function getPermissions(data) {
+  let url = buildURL("list", { data }, CONTROLLER, VIEW + "Actions");
+  document.getElementById("userTypeId").value = data;
 
   request(url).then(({ data }) => showPermissions(data));
 }
 
 function showPermissions(response) {
+  modal("modalContainerForm1");
   if (response) {
-    modal("modalContainerForm1");
     let checks = document.querySelectorAll(".actionCheck");
     checks.forEach((el) => (el.checked = false));
 

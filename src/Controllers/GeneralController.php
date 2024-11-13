@@ -23,7 +23,7 @@ class GeneralController extends Session
   public function edit()
   {
     $sp = $this->getSP();
-    $data = GeneralModel::get($sp, $_GET["id"]);
+    $data = GeneralModel::get($sp, $_GET["data"]);
     $this->response(["data" => $data]);
   }
 

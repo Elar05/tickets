@@ -14,39 +14,11 @@
       <div class="card-body">
         <input type="hidden" id="txtId" class="Popup">
         <div class="row mb-4">
-          <div class="col-lg-4 mb-3 mb-lg-0">
-            <label class="form-label fw-bold mb-1 required">Titulo</label>
+          <div class="col-lg-4">
+            <label class="form-label fw-bold mb-1 required">Categoria</label>
             <div class="input-group">
               <span class="input-group-text py-1 px-2"><i class="ri-dashboard-line fs-4"></i></span>
-              <select id="cboTitulo" class="form-select Popup Reque"></select>
-            </div>
-          </div>
-
-          <div class="col-lg-8">
-            <div class="row">
-              <div class="col-lg-4 mb-3 mb-lg-0">
-                <label class="form-label fw-bold mb-1 required">Categoria</label>
-                <div class="input-group">
-                  <span class="input-group-text py-1 px-2"><i class="ri-dashboard-line fs-4"></i></span>
-                  <select id="cboCategoria" class="form-select Popup Reque"></select>
-                </div>
-              </div>
-
-              <div class="col-lg-4 mb-3 mb-lg-0">
-                <label class="form-label fw-bold mb-1 required">Sub Categoria</label>
-                <div class="input-group">
-                  <span class="input-group-text py-1 px-2"><i class="ri-dashboard-line fs-4"></i></span>
-                  <select id="cboSubCategoria" class="form-select Popup Reque"></select>
-                </div>
-              </div>
-
-              <div class="col-lg-4">
-                <label class="form-label fw-bold mb-1 required">Prioridad</label>
-                <div class="input-group">
-                  <span class="input-group-text py-1 px-2"><i class="ri-dashboard-line fs-4"></i></span>
-                  <select id="cboPrioridad" class="form-select Popup Reque"></select>
-                </div>
-              </div>
+              <select id="cboCategoria" class="form-select Popup Reque"></select>
             </div>
           </div>
         </div>

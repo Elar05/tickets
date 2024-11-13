@@ -323,10 +323,6 @@ function formatoNumeroEntero(num) {
   return (sign ? "" : "-") + num;
 }
 
-function formatDate(fecha) {
-  return fecha.split("/").reverse().join("-");
-}
-
 function updateCombo(control, value) {
   const element = document.getElementById(control);
   if (element) {
@@ -348,7 +344,7 @@ function showDataFrom(className, values) {
 
     if (type === "num") control.value = redondearNumero(value);
     if (type === "dtt") control.value = value;
-    if (type === "lbl") control.innerText = value;
+    if (type === "lbl") control.innerHTML = value;
     if (type === "cbo") updateCombo(control.id, value);
     if (type === "img") control.src = `data:image/jpeg;base64,${value}`;
     if (type === "chk" || type === "opt") control.checked = value === "1";
@@ -1513,14 +1509,16 @@ function configurarControles(controles) {
   }
 }
 
-function buildURL(action, params = {}, controller = CONTROLLER, view = VIEW) {
-  let url = `/${CONTROLLER}/${VIEW}/${action}?controller=${controller}&view=${view}`;
+function buildURL(action, params = [], options = {}) {
+  const controller = options.controller ?? CONTROLLER;
+  let view = options.view ?? VIEW;
+  const extraView = options.extraView || "";
 
-  for (const key in params) {
-    if (params.hasOwnProperty(key)) {
-      url += `&${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
-    }
-  }
+  if (extraView) view += extraView;
+
+  let data = params.join("|");
+
+  let url = `/${CONTROLLER}/${VIEW}/${action}?controller=${controller}&view=${view}&data=${data}`;
 
   return url;
 }
@@ -1546,20 +1544,21 @@ function getConfig() {
 
   let className = sessionStorage.getItem("classItem");
   let link = document.querySelector(`.${className}`);
+  if (link) {
+    link.classList.add("active");
 
-  link.classList.add("active");
+    link.closest(".menu-dropdown").classList.add("show");
 
-  link.closest(".menu-dropdown").classList.add("show");
+    link
+      .closest(".menu-dropdown")
+      .closest(".nav-item")
+      .children[0].classList.remove("collapsed");
 
-  link
-    .closest(".menu-dropdown")
-    .closest(".nav-item")
-    .children[0].classList.remove("collapsed");
-
-  link
-    .closest(".menu-dropdown")
-    .closest(".nav-item")
-    .children[0].setAttribute("aria-expanded", "true");
+    link
+      .closest(".menu-dropdown")
+      .closest(".nav-item")
+      .children[0].setAttribute("aria-expanded", "true");
+  }
 }
 
 function NumberCheck(e, field) {
@@ -1580,4 +1579,43 @@ function NumberCheck(e, field) {
   }
 
   return false;
+}
+
+function formatDate(dateString) {
+  // Reemplazar el espacio entre la fecha y la hora por una "T" para compatibilidad con ISO
+  const isoString = dateString.replace(" ", "T");
+
+  // Convertir la cadena al formato Date
+  const date = new Date(isoString);
+
+  // Lista de meses abreviados
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  // Función para añadir ceros a números de un solo dígito
+  const pad = (num) => num.toString().padStart(2, "0");
+
+  // Obtener las partes de la fecha
+  const day = pad(date.getDate());
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  const hours = pad(date.getHours() % 12 || 12); // Formato de 12 horas
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+  const period = date.getHours() >= 12 ? "PM" : "AM"; // Determinar si es AM o PM
+
+  // Formatear y devolver la fecha como string
+  return `${day} ${month} ${year} - ${hours}:${minutes} ${period}`;
 }

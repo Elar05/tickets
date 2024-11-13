@@ -7,11 +7,13 @@ formLogin.addEventListener("submit", function (e) {
     const data = new FormData(this);
     request("/login/auth", data, "POST").then((data) => {
       if ("success" in data) {
-        document.getElementById("result").innerHTML = `<p>${data.success}</p>`;
+        iziAlert("success", data.success);
 
         setTimeout(() => {
           window.location.href = URL_BASE;
         }, 1000);
+      } else {
+        iziAlert("error", data.error);
       }
     });
   }

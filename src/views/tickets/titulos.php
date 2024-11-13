@@ -31,13 +31,13 @@
         <button id="btnCancel" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <input type="hidden" id="tipocId" value="5">
-        <input type="hidden" id="txtId" class="Popup">
+        <input type="hidden" id="txtTipocId" value="5" class="Save">
+        <input type="hidden" id="txtId" class="Popup Save">
 
         <label for="name" class="form-label fw-semibold mb-1">Nombre de Prioridad</label>
         <div class="input-group">
           <span class="input-group-text"><i class="ri-user-line fs-5"></i></span>
-          <input type="text" id="txtName" class="form-control Popup Reque" />
+          <input type="text" id="txtName" class="form-control Popup Reque Save" />
         </div>
       </div>
       <div class="modal-footer py-2 border-top">
