@@ -1,10 +1,9 @@
 window.onload = function () {
   getConfig();
 
-  if (VIEW === "users" || VIEW === "user-types") {
+  if (VIEW === "users" || VIEW === "user-types" || VIEW === "agencias") {
     getHelpers();
-  }
-  if (VIEW === "user-actions") {
+  } else {
     getList();
   }
 
@@ -113,7 +112,7 @@ function configureChecks() {
 }
 
 function getHelpers() {
-  let url = buildURL("list", {}, CONTROLLER, VIEW + "Helpers");
+  let url = buildURL("list", [], { extraView: "Helpers" });
 
   request(url).then(({ data }) => showHelpers(data));
 }
@@ -134,6 +133,10 @@ function showHelpers(response) {
       });
       document.getElementById("contentPermissions").innerHTML = html;
       configureChecks();
+    }
+    if (VIEW === "agencias") {
+      let estados = listas[0].split("¬");
+      createCombo(estados, "cboEstado", "Seleccione");
     }
 
     getList();
@@ -180,7 +183,7 @@ function showList(response) {
 }
 
 function editRegister(id) {
-  let url = buildURL("edit", `&id=${id}`);
+  let url = buildURL("edit", [id]);
 
   request(url).then(({ data }) => showEdit(data));
 }
@@ -190,8 +193,8 @@ function showEdit(response) {
     btnNew.click();
     let inputs = response.split("|");
 
-    let cboStatus = document.getElementById("cboStatus");
-    if (cboStatus) cboStatus.disabled = false;
+    let cboEstado = document.getElementById("cboEstado");
+    if (cboEstado) cboEstado.disabled = false;
 
     showDataFrom("Popup", inputs);
   }

@@ -21,6 +21,15 @@
               <select id="cboCategoria" class="form-select Popup Reque"></select>
             </div>
           </div>
+
+          <div class="col-lg-4">
+            <input type="hidden" id="userId" value="<?= $this->user["id"] ?>">
+            <label class="form-label fw-bold mb-1 required">Agencia</label>
+            <div class="input-group">
+              <span class="input-group-text py-1 px-2"><i class="ri-building-line fs-4"></i></span>
+              <select id="cboAgencia" class="form-select Popup Reque"></select>
+            </div>
+          </div>
         </div>
 
         <div class="row mb-4">

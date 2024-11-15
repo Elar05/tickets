@@ -25,4 +25,9 @@ class SecurityController extends Session
   {
     $this->view("users/index");
   }
+
+  public function Agencias()
+  {
+    $this->view("agencias/index");
+  }
 }

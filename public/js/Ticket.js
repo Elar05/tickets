@@ -265,7 +265,13 @@ function configureCombos() {
 }
 
 function getHelpers() {
-  let url = buildURL("list", [], { extraView: "Helpers" });
+  let data = [];
+
+  if (VIEW === "manejo") {
+    data.push(document.querySelector("#userId").value);
+  }
+
+  let url = buildURL("list", data, { extraView: "Helpers" });
 
   request(url).then(({ data }) => showHelpers(data));
 }

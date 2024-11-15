@@ -113,10 +113,10 @@ $router->mount("/security/users", function () use ($router) {
   });
 });
 
-$router->mount("/agencias", function () use ($router) {
-  $router->get("/nueva", function () {
+$router->mount("/security/agencias", function () use ($router) {
+  $router->get("/", function () {
     $controller = new SecurityController();
-    $controller->Users();
+    $controller->Agencias();
   });
 
   $router->get("/list", function () {

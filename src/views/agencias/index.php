@@ -3,7 +3,7 @@
 
 <div class="card shadow">
   <div class="card-header align-items-center d-flex">
-    <h3 class="card-title fs-4 mb-0 flex-grow-1">Listado de Agencias</h3>
+    <h3 class="card-title fs-4 mb-0 flex-grow-1">Mantenimiento de Agencias</h3>
 
     <div class="flex-shrink-0">
       <button class="btn btn-sm fs-5 btn-dorado btn-label waves-effect waves-light" id="btnNew" data-bs-toggle="modal"
@@ -29,12 +29,20 @@
       <div class="modal-body">
         <input type="hidden" id="txtId" class="Popup Save">
 
-        <label for="name" class="form-label fw-bold mb-1">Nombre</label>
-        <div class="input-group">
-          <span class="input-group-text">
-            <i class="ri-user-2-fill fs-5"></i>
-          </span>
-          <input type="text" id="txtName" class="form-control Popup Reque Save" />
+        <div class="mb-3">
+          <label for="name" class="form-label fw-bold mb-1">Nombre</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="ri-building-line fs-5"></i></span>
+            <input type="text" id="txtName" class="form-control Popup Reque Save" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="name" class="form-label fw-bold mb-1">Estado</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="ri-information-fill fs-5"></i></span>
+            <select id="cboEstado" class="form-select Popup Reque Save"></select>
+          </div>
         </div>
       </div>
       <div class="modal-footer py-2 border-top">

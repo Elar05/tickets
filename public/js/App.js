@@ -135,7 +135,7 @@ function unlockSection(className) {
 function createCombo(list, id, firstElement = false) {
   let content = "";
   if (firstElement) {
-    content += `<option value="">${firstElement}</option>`;
+    content += `<option value="" selected disabled>${firstElement}</option>`;
   }
   list.forEach((element) => {
     element = element.split("|");
