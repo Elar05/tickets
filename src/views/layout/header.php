@@ -71,12 +71,12 @@
                 aria-haspopup="true" aria-expanded="false">
                 <span class="d-flex align-items-center">
                   <img class="rounded-circle header-profile-user"
-                    src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                    src="<?= URL ?>/assets/images/logo-pro-sm.png">
+
                   <span class="text-start ms-xl-2">
-                    <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">Anna
-                      Adame</span>
-                    <span
-                      class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">Founder</span>
+                    <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
+                      <?= $this->user['name'] ?>
+                    </span>
                   </span>
                 </span>
               </button>
@@ -98,19 +98,19 @@
         <!-- Dark Logo-->
         <a href="index.html" class="logo logo-dark">
           <span class="logo-sm">
-            <img src="assets/images/logo-sm.png" alt="" height="22">
+            <img src="<?= URL ?>/assets/images/logo-pro-sm.png" width="30">
           </span>
           <span class="logo-lg">
-            <img src="assets/images/logo-dark.png" alt="" height="17">
+            <img src="<?= URL ?>/assets/images/logo-pro.png" width="100">
           </span>
         </a>
         <!-- Light Logo-->
         <a href="index.html" class="logo logo-light">
           <span class="logo-sm">
-            <img src="assets/images/logo-sm.png" alt="" height="22">
+            <img src="<?= URL ?>/assets/images/logo-pro-sm.png" width="30">
           </span>
           <span class="logo-lg">
-            <img src="assets/images/logo-light.png" alt="" height="17">
+            <img src="<?= URL ?>/assets/images/logo-pro.png" width="100">
           </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
