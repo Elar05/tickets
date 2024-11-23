@@ -1,5 +1,6 @@
 debug.log
 /vendor/
+/config/
 /assets/documentos/
 .txt
 /assets/cobranzas/
