@@ -790,6 +790,8 @@ function GrillaScroll(
                 valor = matriz[i][j];
                 break;
             }
+            contenido += ";vertical-align:middle";
+
             if (estilos.length > 0) {
               var obj = estilos.find((x) => x.Col == j);
               if (obj != null) {
@@ -1523,11 +1525,9 @@ function buildURL(action, params = [], options = {}) {
   return url;
 }
 
-function modal(modalId, open = true) {
-  var modal = new bootstrap.Modal(document.getElementById(modalId));
-
-  if (open) modal.show();
-  else document.querySelector(`#${modalId} button.btn-close`).click();
+function toggleModal(controlId) {
+  let element = document.querySelector(`#${controlId}`);
+  if (element) element.click();
 }
 
 function setConfig(controller, view) {

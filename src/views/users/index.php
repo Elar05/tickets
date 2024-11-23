@@ -20,7 +20,7 @@
 </div>
 
 <div class="modal fade" id="modalContainer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header py-3 border-bottom">
         <h5 class="modal-title" id="modalTitle">Nuevo Registro</h5>
@@ -29,12 +29,121 @@
       <div class="modal-body">
         <input type="hidden" id="txtId" class="Popup Save">
 
-        <label for="name" class="form-label fw-bold mb-1">Nombre</label>
-        <div class="input-group">
-          <span class="input-group-text">
-            <i class="ri-user-2-fill fs-5"></i>
-          </span>
-          <input type="text" id="txtName" class="form-control Popup Reque Save" />
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">Nombres</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-2-fill fs-5"></i></span>
+                <input type="text" id="txtName" class="form-control Popup Reque Save" />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">Correo</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-mail-line fs-5"></i></span>
+                <input type="email" id="txtEmail" class="form-control Popup Reque Save" />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">Contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-lock-password-line fs-5"></i></span>
+                <input type="password" id="txtPassword" class="form-control Popup Reque Save" />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">Rol</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-shield-user-line fs-5"></i></span>
+                <select id="cboRol" class="form-select Popup Reque Save"></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">Tipo Documento</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-2-fill fs-5"></i></span>
+                <select id="cboTipoDocumento" class="form-select Popup Save"></select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">N° Documento</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-2-fill fs-5"></i></span>
+                <input type="text" id="txtNroDocumento" class="form-control Popup Save" maxlength="11">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">Télefono</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-2-fill fs-5"></i></span>
+                <input type="text" id="txtTelefono" class="form-control Popup Save">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">Fecha Nacimiento</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-2-fill fs-5"></i></span>
+                <input type="date" id="dttFechaNacimiento" class="form-control Popup Save">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">Función / Descripción</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-2-fill fs-5"></i></span>
+                <textarea id="txtDescripcion" class="form-control Popup Reque Save"></textarea>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">Estado</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-information-fill fs-5"></i></span>
+                <select id="cboEstado" class="form-select Popup Reque Save"></select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">Agencias</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-database-line fs-5"></i></span>
+                <select id="cboAgencia" class="form-select"></select>
+                <span id="btnAddAgencia" class="input-group-text bg-success text-white"><i class="ri-add-line fs-5"></i></span>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold mb-1">Agencias Asignadas</label>
+              <div class="table-responsive">
+                <table id="tableAgencias" class="table align-middle table-nowrap mb-0">
+                  <thead>
+                    <tr>
+                      <th scope="col">Agencia</th>
+                      <th scope="col">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="2" scope="col" class="text-center">No Hay Agencias</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-footer py-2 border-top">

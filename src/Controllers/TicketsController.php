@@ -45,7 +45,7 @@ class TicketsController extends Session
   public function Abiertos()
   {
     $this->view("tickets/listado", [
-      "tipoTicket" => 3,
+      "tipoTicket" => 1,
       "titulo" => "Abiertos"
     ]);
   }
@@ -53,7 +53,7 @@ class TicketsController extends Session
   public function Cerrados()
   {
     $this->view("tickets/listado", [
-      "tipoTicket" => 4,
+      "tipoTicket" => 2,
       "titulo" => "Cerrados"
     ]);
   }
@@ -61,7 +61,7 @@ class TicketsController extends Session
   public function ManejoAbiertos()
   {
     $this->view("tickets/manejo-listado", [
-      "tipoTicket" => 3,
+      "tipoTicket" => 1,
       "titulo" => "Abiertos"
     ]);
   }
@@ -69,7 +69,7 @@ class TicketsController extends Session
   public function ManejoCerrados()
   {
     $this->view("tickets/manejo-listado", [
-      "tipoTicket" => 4,
+      "tipoTicket" => 2,
       "titulo" => "Cerrados"
     ]);
   }

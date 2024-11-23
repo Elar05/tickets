@@ -293,7 +293,10 @@ function showHelpers(response) {
     }
     if (VIEW === "manejo") {
       let listaCategorias = listas[0].split("¬");
+      let agencias = listas[1].split("¬");
+
       createCombo(listaCategorias, "cboCategoria", "Seleccione");
+      createCombo(agencias, "cboAgencia", "Seleccione");
     }
 
     if (VIEW === "") {
@@ -426,20 +429,20 @@ function getList() {
               datos.forEach(function (item) {
                 item = item.split("|");
 
-                let classSoporte = item[2] === "" ? "info" : "success";
+                let classSoporte = item[3] === "" ? "info" : "success";
                 let soporte = `<span class="badge rounded-pill bg-${classSoporte} fs-6">
-                  ${item[2] || "Sin Soporte"}
+                  ${item[3] || "Sin Soporte"}
                 </span>`;
 
                 let fechaAsignada =
-                  item[3] === ""
+                  item[4] === ""
                     ? `<span class="badge rounded-pill bg-info fs-6">Sin Asignar</span>`
-                    : formatDate(item[3]);
+                    : formatDate(item[4]);
 
                 let fechaCierre =
-                  item[4] === ""
+                  item[5] === ""
                     ? `<span class="badge rounded-pill bg-info fs-6">Sin Cierre</span>`
-                    : formatDate(item[4]);
+                    : formatDate(item[5]);
 
                 let viewTicket = `<a 
                   href="${URL_BASE}/${CONTROLLER}/detalle/${item[0]}"
@@ -467,11 +470,12 @@ function getList() {
 
                 let row = [
                   item[0], // N° Ticket
-                  item[1], // Categoria
+                  item[1], // Agencia
+                  item[2], // Categoria
                   soporte,
                   fechaAsignada,
                   fechaCierre,
-                  formatDate(item[5]),
+                  formatDate(item[6]),
                   viewTicket,
                 ];
                 $("#tableTickets").DataTable().row.add(row);

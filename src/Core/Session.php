@@ -80,4 +80,9 @@ class Session extends Controller
   {
     return $this->userId;
   }
+
+  public function getUserType()
+  {
+    return $this->userType;
+  }
 }

@@ -26,6 +26,7 @@
           <thead>
             <tr>
               <th>N° Ticket</th>
+              <th>Agencia</th>
               <th>Categoria</th>
               <th>Soporte</th>
               <th>Fecha Asignada</th>

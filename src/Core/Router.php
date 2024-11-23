@@ -1,5 +1,6 @@
 <?php
 
+use Instagram\Controllers\CobranzasController;
 use Instagram\Controllers\Main;
 use Instagram\Controllers\Login;
 use Instagram\Controllers\Logout;
@@ -103,8 +104,8 @@ $router->mount("/security/users", function () use ($router) {
   });
 
   $router->post("/save", function () {
-    $controller = new GeneralController();
-    $controller->store();
+    $controller = new SecurityController();
+    $controller->saveUser();
   });
 
   $router->post("/delete", function () {
@@ -315,6 +316,33 @@ $router->mount("/tickets", function () use ($router) {
   $router->post("/titulos/delete", function () {
     $controller = new GeneralController();
     $controller->destroy();
+  });
+});
+
+$router->mount("/cobranzas", function () use ($router) {
+  $router->get("/nuevo", function () {
+    $controller = new CobranzasController();
+    $controller->Nuevo();
+  });
+
+  $router->post("/nuevo/save", function () {
+    $controller = new GeneralController();
+    $controller->store();
+  });
+
+  $router->post("/nuevo/guardar-documento", function () {
+    $controller = new CobranzasController();
+    $controller->saveVoucher();
+  });
+
+  $router->get("/listado", function () {
+    $controller = new CobranzasController();
+    $controller->Listado();
+  });
+
+  $router->get("/listado/list", function () {
+    $controller = new GeneralController();
+    $controller->list();
   });
 });
 

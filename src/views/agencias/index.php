@@ -38,6 +38,22 @@
         </div>
 
         <div class="mb-3">
+          <label for="name" class="form-label fw-bold mb-1">Código</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="ri-building-line fs-5"></i></span>
+            <input type="text" id="txtCodigo" class="form-control Popup Reque Save" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="name" class="form-label fw-bold mb-1">NIC</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="ri-building-line fs-5"></i></span>
+            <input type="text" id="txtNIC" class="form-control Popup Reque Save" />
+          </div>
+        </div>
+
+        <div class="mb-3">
           <label for="name" class="form-label fw-bold mb-1">Estado</label>
           <div class="input-group">
             <span class="input-group-text"><i class="ri-information-fill fs-5"></i></span>

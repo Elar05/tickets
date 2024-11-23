@@ -1,3 +1,5 @@
+let listaAgencias = [];
+
 window.onload = function () {
   getConfig();
 
@@ -8,6 +10,7 @@ window.onload = function () {
   }
 
   configureButtons();
+  configureCombos();
 };
 
 function seleccionarBoton(idDiv, id, idButton, event) {
@@ -39,7 +42,7 @@ function seleccionarFila(fila, id, prefijo, event) {
 
 function configureButtons() {
   let btnNew = document.getElementById("btnNew");
-  if (btnNew)
+  if (btnNew) {
     btnNew.addEventListener("click", (e) => {
       clearForm("Popup");
 
@@ -51,12 +54,26 @@ function configureButtons() {
         cboEstado.value = 1;
         cboEstado.disabled = true;
       }
+
+      if (VIEW === "users") {
+        document.getElementById("txtPassword").classList.add("Reque");
+        document.getElementById("cboTipoDocumento").value = 1;
+        updateCombo("cboTipoDocumento", 1);
+      }
     });
+  }
 
   let btnSave = document.getElementById("btnSave");
-  if (btnSave !== null)
+  if (btnSave !== null) {
     btnSave.addEventListener("click", (e) => {
       let valid = validate("Reque");
+
+      if (VIEW === "users") {
+        if (listaAgencias.length === 0) {
+          iziAlert("error", "Debe asignar al menos una agencia");
+          return;
+        }
+      }
 
       if (valid) {
         Swal.fire({
@@ -81,6 +98,42 @@ function configureButtons() {
         });
       }
     });
+  }
+
+  let btnAddAgencia = document.getElementById("btnAddAgencia");
+  if (btnAddAgencia) {
+    btnAddAgencia.addEventListener("click", () => {
+      let cboAgencia = document.getElementById("cboAgencia");
+      if (cboAgencia) {
+        let id = cboAgencia.value;
+        let nombre = cboAgencia.options[cboAgencia.selectedIndex].text;
+
+        if (listaAgencias.find((item) => item.id === id)) {
+          iziAlert("error", "La agencia ya existe");
+          return;
+        }
+
+        listaAgencias.push({ id, nombre });
+        listarAgencias();
+      }
+    });
+  }
+}
+
+function configureCombos() {
+  let cboTipoDocumento = document.getElementById("cboTipoDocumento");
+  if (cboTipoDocumento) {
+    cboTipoDocumento.addEventListener("change", (e) => {
+      if (cboTipoDocumento.value == 1)
+        document
+          .getElementById("txtNroDocumento")
+          .setAttribute("maxlength", "11");
+      else
+        document
+          .getElementById("txtNroDocumento")
+          .setAttribute("maxlength", "20");
+    });
+  }
 }
 
 function configureChecks() {
@@ -90,7 +143,7 @@ function configureChecks() {
       action.addEventListener("click", () => {
         let actionId = action.value;
         let userTypeId = document.getElementById("userTypeId").value;
-        let url = buildURL("save", "Actions");
+        let url = buildURL("save", [], { extraView: "Actions" });
 
         const form = new FormData();
         form.append("data", `${userTypeId}|${actionId}`);
@@ -137,6 +190,17 @@ function showHelpers(response) {
     if (VIEW === "agencias") {
       let estados = listas[0].split("¬");
       createCombo(estados, "cboEstado", "Seleccione");
+    }
+    if (VIEW === "users") {
+      let roles = listas[0].split("¬");
+      let documentos = listas[1].split("¬");
+      let estados = listas[2].split("¬");
+      let agencias = listas[3].split("¬");
+
+      createCombo(roles, "cboRol", "Seleccione");
+      createCombo(documentos, "cboTipoDocumento", "Seleccione");
+      createCombo(estados, "cboEstado", "Seleccione");
+      createCombo(agencias, "cboAgencia", "Seleccione");
     }
 
     getList();
@@ -190,11 +254,32 @@ function editRegister(id) {
 
 function showEdit(response) {
   if (response) {
-    btnNew.click();
+    toggleModal("btnNew");
     let inputs = response.split("|");
 
     let cboEstado = document.getElementById("cboEstado");
     if (cboEstado) cboEstado.disabled = false;
+
+    if (VIEW === "users") {
+      listaAgencias = [];
+      let listas = response.split("¯");
+      inputs = listas[0].split("|");
+      let agencias = listas[1];
+
+      if (agencias !== "") {
+        agencias = agencias.split("¬");
+        agencias.forEach((agencia) => {
+          let item = agencia.split("|");
+          let id = item[0];
+          let nombre = item[1];
+          listaAgencias.push({ id, nombre });
+        });
+      }
+
+      listarAgencias();
+
+      document.getElementById("txtPassword").classList.remove("Reque");
+    }
 
     showDataFrom("Popup", inputs);
   }
@@ -203,6 +288,11 @@ function showEdit(response) {
 function saveData() {
   let data = getDataSave("Popup");
   let url = buildURL("save");
+
+  if (VIEW === "users") {
+    data += "¯";
+    data += getAgenciasText();
+  }
 
   const form = new FormData();
   form.append("data", data);
@@ -288,7 +378,7 @@ function showDelete(response) {
 }
 
 function getPermissions(data) {
-  let url = buildURL("list", { data }, CONTROLLER, VIEW + "Actions");
+  let url = buildURL("list", [data], { extraView: "Actions" });
   document.getElementById("userTypeId").value = data;
 
   request(url).then(({ data }) => showPermissions(data));
@@ -306,4 +396,37 @@ function showPermissions(response) {
       if (actionCheck) actionCheck.checked = true;
     });
   }
+}
+
+function listarAgencias() {
+  document.querySelector("#tableAgencias tbody").innerHTML = "";
+  document.querySelector("#tableAgencias tfoot").classList.remove("d-none");
+
+  if (listaAgencias.length > 0) {
+    document.querySelector("#tableAgencias tfoot").classList.add("d-none");
+
+    let html = "";
+    listaAgencias.forEach((item) => {
+      html += `<tr>
+        <td>${item.nombre}</td>
+        <td>
+          <button class="btn btn-sm btn-danger btn-icon"
+            onclick="eliminarAgencia(${item.id}, this)"
+          >
+            <i class="ri-close-line fs-4"></i>
+          </button>
+        </td>
+      </tr>`;
+    });
+    document.querySelector("#tableAgencias tbody").innerHTML = html;
+  }
+}
+
+function eliminarAgencia(id, btn) {
+  listaAgencias = listaAgencias.filter((item) => item.id != id);
+  btn.closest("tr").remove();
+}
+
+function getAgenciasText() {
+  return listaAgencias.map((item) => item.id).join("|");
 }

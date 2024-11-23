@@ -22,7 +22,7 @@ class User extends Model
       if ($query->rowCount() === 1) {
         $user = $query->fetch(PDO::FETCH_ASSOC);
 
-        if ($user["status"] === "0")
+        if ($user["estadod_id"] === "2")
           return ["error" => "Usuario no activo"];
 
         if (!password_verify($password, $user["password"]))
