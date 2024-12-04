@@ -3,7 +3,7 @@ let previewTemplate;
 let dropzone;
 let dropzonePreviewNode = document.querySelector("#dropzone-preview-list");
 let editor;
-const prioridadMap = { 8: "danger", 9: "warning", 10: "primary" };
+const prioridadMap = { 1: "danger", 2: "warning", 3: "primary" };
 
 window.onload = function () {
   getConfig();

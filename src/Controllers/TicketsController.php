@@ -9,7 +9,7 @@ class TicketsController extends Session
 {
   public function __construct()
   {
-    parent::__construct("ticket");
+    parent::__construct("tickets");
   }
 
   public function Nuevo()

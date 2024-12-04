@@ -1,4 +1,5 @@
 let listaAgencias = [];
+let AGENCIAS = [];
 
 window.onload = function () {
   getConfig();
@@ -57,8 +58,9 @@ function configureButtons() {
 
       if (VIEW === "users") {
         document.getElementById("txtPassword").classList.add("Reque");
-        document.getElementById("cboTipoDocumento").value = 1;
         updateCombo("cboTipoDocumento", 1);
+        listaAgencias = [];
+        listarAgencias();
       }
     });
   }
@@ -104,18 +106,36 @@ function configureButtons() {
   if (btnAddAgencia) {
     btnAddAgencia.addEventListener("click", () => {
       let cboAgencia = document.getElementById("cboAgencia");
-      if (cboAgencia) {
-        let id = cboAgencia.value;
-        let nombre = cboAgencia.options[cboAgencia.selectedIndex].text;
 
-        if (listaAgencias.find((item) => item.id === id)) {
-          iziAlert("error", "La agencia ya existe");
-          return;
-        }
-
-        listaAgencias.push({ id, nombre });
-        listarAgencias();
+      if (cboAgencia.value === "") {
+        iziAlert("error", "Seleccione una agencia");
+        return;
       }
+
+      let id = cboAgencia.value;
+      let nombre = cboAgencia.options[cboAgencia.selectedIndex].text;
+
+      if (listaAgencias.find((item) => item.id === id)) {
+        iziAlert("error", "La agencia ya existe");
+        return;
+      }
+
+      listaAgencias.push({ id, nombre });
+      listarAgencias();
+      updateCombo("cboAgencia", "");
+    });
+  }
+
+  let btnAddAllAgencias = document.getElementById("btnAddAllAgencias");
+  if (btnAddAllAgencias) {
+    btnAddAllAgencias.addEventListener("click", () => {
+      listaAgencias = [];
+      AGENCIAS.forEach((item) => {
+        item = item.split("|");
+        listaAgencias.push({ id: item[0], nombre: item[1] });
+      });
+      listarAgencias();
+      updateCombo("cboAgencia", "");
     });
   }
 }
@@ -138,15 +158,16 @@ function configureCombos() {
 
 function configureChecks() {
   if (VIEW === "user-types") {
-    let actions = document.querySelectorAll(".actionCheck");
-    actions.forEach((action) => {
-      action.addEventListener("click", () => {
-        let actionId = action.value;
+    let permissions = document.querySelectorAll(".permissionCheck");
+    permissions.forEach((permission) => {
+      permission.addEventListener("click", () => {
         let userTypeId = document.getElementById("userTypeId").value;
-        let url = buildURL("save", [], { extraView: "Actions" });
+        let permissionId = permission.value;
+        let fatherId = permission.dataset.father;
+        let url = buildURL("save", [], { extraView: "Permissions" });
 
         const form = new FormData();
-        form.append("data", `${userTypeId}|${actionId}`);
+        form.append("data", `${userTypeId}|${permissionId}|${fatherId}`);
 
         request(url, form, "POST").then(({ data }) => {
           if (data) {
@@ -175,17 +196,7 @@ function showHelpers(response) {
     let listas = response.split("¯");
 
     if (VIEW === "user-types") {
-      let actions = listas[0].split("¬");
-      let html = "";
-      actions.forEach((action) => {
-        let item = action.split("|");
-        html += `<div class="form-check">
-          <input class="form-check-input actionCheck" value="${item[0]}"id="action_${item[0]}" type="checkbox">
-          <label class="form-check-label fw-bold text-black fs-5" for="action_${item[0]}">${item[1]}</label>
-        </div>`;
-      });
-      document.getElementById("contentPermissions").innerHTML = html;
-      configureChecks();
+      listMenu(listas[0]);
     }
     if (VIEW === "agencias") {
       let estados = listas[0].split("¬");
@@ -195,12 +206,13 @@ function showHelpers(response) {
       let roles = listas[0].split("¬");
       let documentos = listas[1].split("¬");
       let estados = listas[2].split("¬");
-      let agencias = listas[3].split("¬");
+      AGENCIAS = listas[3].split("¬");
 
       createCombo(roles, "cboRol", "Seleccione");
       createCombo(documentos, "cboTipoDocumento", "Seleccione");
       createCombo(estados, "cboEstado", "Seleccione");
-      createCombo(agencias, "cboAgencia", "Seleccione");
+      createCombo(AGENCIAS, "cboAgencia", "Seleccione");
+      $("#cboAgencia").select2({ dropdownParent: $("#modalContainer") });
     }
 
     getList();
@@ -218,7 +230,11 @@ function showList(response) {
     let listas = response.split("¯");
     let lista = listas[0].split("¬");
 
+    let filtro = null;
+
     if (VIEW === "user-types") {
+      filtro = true;
+
       if (botones.length === 2) {
         botones.push({
           cabecera: "Permisos",
@@ -236,7 +252,7 @@ function showList(response) {
       VIEW,
       CONTROLLER,
       null,
-      null,
+      filtro,
       null,
       botones,
       30,
@@ -378,23 +394,65 @@ function showDelete(response) {
 }
 
 function getPermissions(data) {
-  let url = buildURL("list", [data], { extraView: "Actions" });
+  let url = buildURL("list", [data], { extraView: "Permissions" });
   document.getElementById("userTypeId").value = data;
 
   request(url).then(({ data }) => showPermissions(data));
 }
 
 function showPermissions(response) {
-  modal("modalContainerForm1");
-  if (response) {
-    let checks = document.querySelectorAll(".actionCheck");
-    checks.forEach((el) => (el.checked = false));
+  toggleModal("btnForm1");
+  let checks = document.querySelectorAll(".permissionCheck");
+  checks.forEach((el) => (el.checked = false));
 
-    let actions = response.split("|");
-    actions.forEach((action) => {
-      let actionCheck = document.getElementById("action_" + action);
-      if (actionCheck) actionCheck.checked = true;
+  if (response !== "") {
+    let permissions = response.split("|");
+    permissions.forEach((menu_id) => {
+      let permissionCheck = document.getElementById("menu_" + menu_id);
+      if (permissionCheck) permissionCheck.checked = true;
     });
+  }
+}
+
+function listMenu(data) {
+  if (data != "") {
+    let listaMenu = data.split("¬");
+    let contenido = "";
+
+    listaMenu.forEach((menu) => {
+      let Campos = menu.split("|");
+
+      if (Campos[2] == "0") {
+        contenido += "<tr style='background-color:#202b9b;'>";
+      } else {
+        contenido += `<tr onclick="seleccionarFila(this, ${Campos[0]})">`;
+      }
+
+      contenido += `<td>${Campos[0]}</td>`;
+
+      let titulo = Campos[2] == "0" ? "Módulo de " + Campos[1] : Campos[1];
+      contenido += `<td>${titulo}</td>`;
+
+      if (Campos[2] != "0") {
+        contenido += `<td>
+          <div class="form-check form-check-inline">
+            <div class="switchToggle">
+              <input type="checkbox" class="form-check-input permissionCheck"
+                id="menu_${Campos[0]}" value="${Campos[0]}" data-father="${Campos[2]}"
+              >
+              <label for="menu_${Campos[0]}"></label>
+            </div>
+          </div>
+        </td>`;
+      } else {
+        contenido += "<td></td>";
+      }
+
+      contenido += "</tr>";
+    });
+
+    document.querySelector("#tableMenu tbody").innerHTML = contenido;
+    configureChecks();
   }
 }
 

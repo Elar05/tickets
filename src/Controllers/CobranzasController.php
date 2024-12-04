@@ -9,7 +9,7 @@ class CobranzasController extends Session
 {
   public function __construct()
   {
-    parent::__construct("main");
+    parent::__construct("cobranzas");
   }
 
   public function Nuevo()

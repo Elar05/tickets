@@ -62,6 +62,14 @@
                 <select id="cboRol" class="form-select Popup Reque Save"></select>
               </div>
             </div>
+            
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold mb-1">Función / Descripción</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-2-fill fs-5"></i></span>
+                <textarea id="txtDescripcion" class="form-control Popup Reque Save"></textarea>
+              </div>
+            </div>            
           </div>
 
           <div class="col-lg-4">
@@ -96,17 +104,7 @@
                 <input type="date" id="dttFechaNacimiento" class="form-control Popup Save">
               </div>
             </div>
-          </div>
-
-          <div class="col-lg-4">
-            <div class="mb-3">
-              <label for="name" class="form-label fw-bold mb-1">Función / Descripción</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="ri-user-2-fill fs-5"></i></span>
-                <textarea id="txtDescripcion" class="form-control Popup Reque Save"></textarea>
-              </div>
-            </div>
-
+            
             <div class="mb-3">
               <label for="name" class="form-label fw-bold mb-1">Estado</label>
               <div class="input-group">
@@ -114,19 +112,22 @@
                 <select id="cboEstado" class="form-select Popup Reque Save"></select>
               </div>
             </div>
+          </div>
 
+          <div class="col-lg-4">
             <div class="mb-3">
               <label for="name" class="form-label fw-bold mb-1">Agencias</label>
-              <div class="input-group">
+              <div class="input-group flex-nowrap">
                 <span class="input-group-text"><i class="ri-database-line fs-5"></i></span>
                 <select id="cboAgencia" class="form-select"></select>
-                <span id="btnAddAgencia" class="input-group-text bg-success text-white"><i class="ri-add-line fs-5"></i></span>
+                <span id="btnAddAgencia" class="input-group-text bg-success text-white cursor-pointer"><i class="ri-add-line fs-5"></i></span>
+                <span id="btnAddAllAgencias" class="input-group-text bg-primary text-white cursor-pointer">Todo</span>
               </div>
             </div>
 
             <div class="mb-3">
               <label class="form-label fw-bold mb-1">Agencias Asignadas</label>
-              <div class="table-responsive">
+              <div class="table-responsive" style="max-height: 300px; overflow-y: scroll;">
                 <table id="tableAgencias" class="table align-middle table-nowrap mb-0">
                   <thead>
                     <tr>

@@ -30,14 +30,14 @@
         <input type="hidden" id="txtId" class="Popup Save">
 
         <div class="mb-3">
-          <label for="name" class="form-label fw-bold mb-1">Nombre</label>
+          <label for="name" class="form-label fw-bold mb-1">Terminal</label>
           <div class="input-group">
             <span class="input-group-text"><i class="ri-building-line fs-5"></i></span>
             <input type="text" id="txtName" class="form-control Popup Reque Save" />
           </div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3 d-none">
           <label for="name" class="form-label fw-bold mb-1">Código</label>
           <div class="input-group">
             <span class="input-group-text"><i class="ri-building-line fs-5"></i></span>

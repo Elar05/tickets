@@ -9,7 +9,7 @@ class SecurityController extends Session
 {
   public function __construct()
   {
-    parent::__construct("main");
+    parent::__construct("security");
   }
 
   public function UserTypes()

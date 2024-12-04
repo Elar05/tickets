@@ -43,10 +43,10 @@ class User extends Model
     try {
       $pdo = new Model();
       $query = $pdo->prepare(
-        "SELECT ua.name
-        FROM user_permissions up
-        INNER JOIN user_actions ua ON up.action_id = ua.id
-        WHERE up.user_type_id = ?;"
+        "SELECT controller
+        FROM perfil_menu pm
+        INNER JOIN menu m ON pm.menu_id = m.menu_id
+        WHERE user_type_id = ? AND father_id != 0;"
       );
       $query->execute([$typeUserId]);
       $data = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -54,7 +54,10 @@ class User extends Model
        * ? Lo que devuelve la consulta: [["name" => 'user'], ["name" => 'main']]
        * ! Lo que debemos devolver: ['user', 'main']
        */
-      return array_column($data, 'name');
+      $data = array_column($data, 'controller');
+      $data[] = 'main';
+      $data[] = 'logout';
+      return $data;
     } catch (PDOException $e) {
       error_log("UserPermissionsModel::getPermissions() -> " . $e->getMessage());
       return false;

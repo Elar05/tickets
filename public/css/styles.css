@@ -44,7 +44,7 @@
 .grilla {
   font-family: Arial, Verdana;
   font-weight: normal;
-  font-size: 12px;
+  font-size: 14px;
   color: #444;
 }
 
@@ -74,7 +74,6 @@
 .FilaDatos {
   color: black;
   background-color: white;
-  font-size: 14px;
 }
 
 .FilaDatos:hover {
@@ -84,7 +83,6 @@
 .FilaSeleccionada {
   color: black;
   background-color: #fbec88;
-  font-size: 14px;
 }
 
 .FilaElegida {

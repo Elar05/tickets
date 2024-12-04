@@ -47,15 +47,28 @@
 </div>
 
 <div class="modal fade" id="modalContainerForm1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
       <div class="modal-header py-3 border-bottom">
         <h5 class="modal-title">Permisos de tipo de usuario</h5>
         <button id="btnCancelForm1" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button class="d-none" id="btnForm1" data-bs-toggle="modal" data-bs-target="#modalContainerForm1"></button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="userTypeId">
-        <div id="contentPermissions"></div>
+        <div id="contentPermissions">
+
+        </div>
+        <table id="tableMenu" class="table table-striped text-center">
+          <thead>
+            <tr class="FilaHead">
+              <th>MenuId</th>
+              <th>Titulo</th>
+              <th>Permitir</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
   </div>

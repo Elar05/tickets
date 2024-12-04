@@ -325,6 +325,11 @@ $router->mount("/cobranzas", function () use ($router) {
     $controller->Nuevo();
   });
 
+  $router->get("/nuevo/list", function () {
+    $controller = new GeneralController();
+    $controller->list();
+  });
+
   $router->post("/nuevo/save", function () {
     $controller = new GeneralController();
     $controller->store();
